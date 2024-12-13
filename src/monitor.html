@@ -7,14 +7,17 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f0f2f5;
+            background: linear-gradient(to bottom, #e3f2fd, #bbdefb, #90caf9);
             margin: 0;
             padding: 20px;
             color: #333;
         }
         h1 {
-            color: #2c3e50;
+            color: #1e88e5;
             text-align: center;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: bold;
         }
         .error {
             margin: 10px 0;
@@ -29,45 +32,52 @@
         }
         .card {
             flex: 1;
-            padding: 15px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            background: linear-gradient(145deg, #ffffff, #e3f2fd);
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
         }
         .card strong {
             display: block;
-            margin-bottom: 5px;
-            color: #2c3e50;
+            margin-bottom: 10px;
+            color: #1e88e5;
+            font-size: 1.2rem;
         }
         .tabs {
             margin-top: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(145deg, #ffffff, #e3f2fd);
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
         .tabs nav {
             display: flex;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 10px;
         }
         .tabs nav button {
             flex: 1;
-            padding: 10px;
+            padding: 10px 0;
             background: none;
             border: none;
-            border-bottom: 2px solid transparent;
+            font-size: 1rem;
+            color: #1e88e5;
             cursor: pointer;
-            font-size: 16px;
-            color: #2c3e50;
+            transition: color 0.3s, border-bottom 0.3s;
+            border-bottom: 3px solid transparent;
         }
         .tabs nav button.active {
-            border-bottom: 2px solid #3498db;
-            font-weight: bold;
+            color: #1565c0;
+            border-bottom: 3px solid #1565c0;
         }
         .tab-content {
             display: none;
-            margin-top: 20px;
         }
         .tab-content.active {
             display: block;
@@ -76,67 +86,58 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            background: #fff;
-            border-radius: 8px;
+            border-radius: 16px;
             overflow: hidden;
+            background: linear-gradient(145deg, #ffffff, #e3f2fd);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 10px;
+            padding: 12px;
             text-align: left;
         }
         th {
-            background-color: #2c3e50;
-            color: #fff;
+            background-color: #1565c0;
+            color: white;
         }
         tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #f1f8ff;
         }
         tr:hover {
-            background-color: #f1f1f1;
+            background-color: #e3f2fd;
         }
-    </style>
+    </style>    
 </head>
 <body>
     <h1>Real-time Server Monitor</h1>
     <div class="error" id="error"></div>
 
     <div class="container">
-        <div class="card">
-            <strong>CPU Usage</strong>
-            <span id="cpu-usage"></span>%
+        <div class="card grouped-card">
+            <strong>System Resources</strong>
+            <div><strong>CPU Usage</strong><span id="cpu-usage"></span>%</div>
+            <div><strong>Memory Usage</strong><span id="memory-usage"></span></div>
+            <div><strong>Disk Usage</strong><span id="disk-usage"></span></div>
         </div>
-        <div class="card">
-            <strong>Memory Usage</strong>
-            <span id="memory-usage"></span>
+
+        <div class="card grouped-card">
+            <strong>System Overview</strong>
+            <div><strong>Tasks</strong><span id="tasks"></span></div>
+            <div><strong>Threads</strong><span id="threads"></span></div>
+            <div><strong>Running Processes</strong><span id="running"></span></div>
+            <div><strong>Load Average</strong><span id="load-average"></span></div>
         </div>
-        <div class="card">
-            <strong>Disk Usage</strong>
-            <span id="disk-usage"></span>
+
+        <div class="card grouped-card">
+            <strong>System Info</strong>
+            <div><strong>Uptime</strong><span id="uptime"></span></div>
+            <div><strong>Battery</strong><span id="battery"></span></div>
         </div>
-        <div class="card">
-            <strong>Tasks</strong>
-            <span id="tasks"></span>
-        </div>
-        <div class="card">
-            <strong>Threads</strong>
-            <span id="threads"></span>
-        </div>
-        <div class="card">
-            <strong>Running Processes</strong>
-            <span id="running"></span>
-        </div>
-        <div class="card">
-            <strong>Load Average</strong>
-            <span id="load-average"></span>
-        </div>
-        <div class="card">
-            <strong>Uptime</strong>
-            <span id="uptime"></span>
-        </div>
-        <div class="card">
-            <strong>Battery</strong>
-            <span id="battery"></span>
+
+        <div class="card grouped-card">
+            <strong>IP Addresses</strong>
+            <div><strong>Local IPv4 Address</strong><span id="local-ip"></span></div>
+            <div><strong>External IP Address</strong><span id="external-ip"></span></div>
         </div>
     </div>
 
@@ -198,18 +199,6 @@
                 </thead>
                 <tbody id="user-data"></tbody>
             </table>
-        </div>
-    </div>
-
-    <h2>IP Addresses</h2>
-    <div class="container">
-        <div class="card">
-            <strong>Local IPv4 Address</strong>
-            <span id="local-ip"></span>
-        </div>
-        <div class="card">
-            <strong>External IP Address</strong>
-            <span id="external-ip"></span>
         </div>
     </div>
 
