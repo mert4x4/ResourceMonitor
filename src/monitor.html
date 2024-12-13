@@ -6,272 +6,309 @@
     <title>Server Monitor</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
         }
-        .stats, .process-stats, .system-overview, .port-data, .ip-addresses, .user-data {
-            margin-top: 10px;
-        }
-        .stat, .process-stat, .overview-stat, .port-stat, .ip-stat, .user-stat {
-            margin: 10px 0;
+        h1 {
+            color: #2c3e50;
+            text-align: center;
         }
         .error {
             margin: 10px 0;
             color: red;
+            font-weight: bold;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .card {
+            flex: 1;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .card strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        .tabs {
+            margin-top: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .tabs nav {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        .tabs nav button {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+        .tabs nav button.active {
+            border-bottom: 2px solid #3498db;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            margin-top: 20px;
+        }
+        .tab-content.active {
+            display: block;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
             text-align: left;
         }
         th {
-            background-color: #f4f4f4;
+            background-color: #2c3e50;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
         }
     </style>
 </head>
 <body>
-    <h1>Real-time Server Statistics</h1>
+    <h1>Real-time Server Monitor</h1>
     <div class="error" id="error"></div>
 
-    <div class="stats" id="stats"></div>
-
-    <h2>System Overview</h2>
-    <div class="system-overview" id="system-overview">
-
+    <div class="container">
+        <div class="card">
+            <strong>CPU Usage</strong>
+            <span id="cpu-usage"></span>%
+        </div>
+        <div class="card">
+            <strong>Memory Usage</strong>
+            <span id="memory-usage"></span>
+        </div>
+        <div class="card">
+            <strong>Disk Usage</strong>
+            <span id="disk-usage"></span>
+        </div>
+        <div class="card">
+            <strong>Tasks</strong>
+            <span id="tasks"></span>
+        </div>
+        <div class="card">
+            <strong>Threads</strong>
+            <span id="threads"></span>
+        </div>
+        <div class="card">
+            <strong>Running Processes</strong>
+            <span id="running"></span>
+        </div>
+        <div class="card">
+            <strong>Load Average</strong>
+            <span id="load-average"></span>
+        </div>
+        <div class="card">
+            <strong>Uptime</strong>
+            <span id="uptime"></span>
+        </div>
+        <div class="card">
+            <strong>Battery</strong>
+            <span id="battery"></span>
+        </div>
     </div>
 
-    <h2>Top Processes</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>PID</th>
-                <th>User</th>
-                <th>Name</th>
-                <th>PR</th>
-                <th>NI</th>
-                <th>VIRT (MB)</th>
-                <th>RES (MB)</th>
-                <th>SHR (MB)</th>
-                <th>S</th>
-                <th>CPU (%)</th>
-                <th>Memory (%)</th>
-                <th>TIME+</th>
-                <th>Command</th>
-            </tr>
-        </thead>
-        <tbody id="process-stats">
-
-        </tbody>
-    </table>
-
-    <h2>Port Data</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>PID</th>
-                <th>Name</th>
-                <th>Local Address</th>
-                <th>Remote Address</th>
-                <th>Status</th>
-                <th>Protocol</th>
-            </tr>
-        </thead>
-        <tbody id="port-data">
-
-        </tbody>
-    </table>
+    <div class="tabs">
+        <nav>
+            <button class="active" data-tab="top-processes">Top Processes</button>
+            <button data-tab="port-data">Port Data</button>
+            <button data-tab="logged-in-users">Logged-in Users</button>
+        </nav>
+        <div id="top-processes" class="tab-content active">
+            <h2>Top Processes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>PID</th>
+                        <th>User</th>
+                        <th>Name</th>
+                        <th>PR</th>
+                        <th>NI</th>
+                        <th>VIRT (MB)</th>
+                        <th>RES (MB)</th>
+                        <th>SHR (MB)</th>
+                        <th>S</th>
+                        <th>CPU (%)</th>
+                        <th>Memory (%)</th>
+                        <th>TIME+</th>
+                        <th>Command</th>
+                    </tr>
+                </thead>
+                <tbody id="process-stats"></tbody>
+            </table>
+        </div>
+        <div id="port-data" class="tab-content">
+            <h2>Port Data</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>PID</th>
+                        <th>Name</th>
+                        <th>Local Address</th>
+                        <th>Remote Address</th>
+                        <th>Status</th>
+                        <th>Protocol</th>
+                    </tr>
+                </thead>
+                <tbody id="port-data-rows"></tbody>
+            </table>
+        </div>
+        <div id="logged-in-users" class="tab-content">
+            <h2>Logged-in Users</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Terminal</th>
+                        <th>Host</th>
+                        <th>Login Time</th>
+                    </tr>
+                </thead>
+                <tbody id="user-data"></tbody>
+            </table>
+        </div>
+    </div>
 
     <h2>IP Addresses</h2>
-    <div class="ip-addresses" id="ip-addresses">
-
+    <div class="container">
+        <div class="card">
+            <strong>Local IPv4 Address</strong>
+            <span id="local-ip"></span>
+        </div>
+        <div class="card">
+            <strong>External IP Address</strong>
+            <span id="external-ip"></span>
+        </div>
     </div>
-
-    <h2>Logged-in Users</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Terminal</th>
-                <th>Host</th>
-                <th>Login Time</th>
-            </tr>
-        </thead>
-        <tbody id="user-data">
-
-        </tbody>
-    </table>
 
     <script>
         const server_url = 'wss://' + location.host + location.pathname.replace('monitor', 'ws');
-        const statsDiv = document.getElementById('stats');
-        const processStatsDiv = document.getElementById('process-stats');
-        const systemOverviewDiv = document.getElementById('system-overview');
-        const portDataDiv = document.getElementById('port-data');
-        const ipAddressesDiv = document.getElementById('ip-addresses');
-        const userDataDiv = document.getElementById('user-data');
-        const errorDiv = document.getElementById('error');
         const ws = new WebSocket(server_url);
 
-        ws.onopen = () => {
-            console.log('WebSocket connected');
-        };
+        ws.onopen = () => console.log('WebSocket connected');
 
         ws.onerror = (e) => {
-            errorDiv.innerHTML = `<div class="stat" style="color:red;">Error: ${e.message}</div>`;
+            document.getElementById('error').innerText = `Error: ${e.message}`;
         };
 
         ws.onmessage = (event) => {
             const message = JSON.parse(event.data);
-
             const messageType = message[0];
+
             if (messageType === 'stats') {
-                updateStats(message[1]);
+                document.getElementById('cpu-usage').innerText = message[1].cpu;
+                document.getElementById('memory-usage').innerText = `${((message[1].memory.used / message[1].memory.total) * 100).toFixed(2)}% (${(message[1].memory.used / 1e9).toFixed(2)} GB / ${(message[1].memory.total / 1e9).toFixed(2)} GB)`;
+                document.getElementById('disk-usage').innerText = `${message[1].disk.percent}% (${(message[1].disk.used / 1e9).toFixed(2)} GB / ${(message[1].disk.total / 1e9).toFixed(2)} GB)`;
             } else if (messageType === 'top_processes') {
-                updateTopProcesses(message[1]);
+                const processStatsDiv = document.getElementById('process-stats');
+                processStatsDiv.innerHTML = '';
+                message[1].forEach(proc => {
+                    const row = `<tr>
+                        <td>${proc.pid}</td>
+                        <td>${proc.username}</td>
+                        <td>${proc.name}</td>
+                        <td>${proc.priority}</td>
+                        <td>${proc.nice}</td>
+                        <td>${proc.virt_memory_mb.toFixed(2)}</td>
+                        <td>${proc.memory_mb.toFixed(2)}</td>
+                        <td>${proc.shr_memory_mb.toFixed(2)}</td>
+                        <td>${proc.status}</td>
+                        <td>${proc.cpu_percent.toFixed(1)}</td>
+                        <td>${proc.memory_percent.toFixed(1)}</td>
+                        <td>${proc.uptime}</td>
+                        <td>${proc.command}</td>
+                    </tr>`;
+                    processStatsDiv.innerHTML += row;
+                });
             } else if (messageType === 'system_overview') {
-                updateSystemOverview(message[1]);
+                document.getElementById('tasks').innerText = message[1].tasks;
+                document.getElementById('threads').innerText = message[1].threads;
+                document.getElementById('running').innerText = message[1].running;
+                document.getElementById('load-average').innerText = message[1].load_average.join(', ');
+                document.getElementById('uptime').innerText = message[1].uptime;
+                document.getElementById('battery').innerText = typeof message[1].battery === 'string' ? message[1].battery : `${message[1].battery.percent}% (${message[1].battery.power_plugged ? 'Plugged In' : 'On Battery'})`;
             } else if (messageType === 'port_data') {
-                updatePortData(message[1]);
+                const portDataDiv = document.getElementById('port-data-rows');
+                portDataDiv.innerHTML = '';
+                message[1].forEach(port => {
+                    const row = `<tr>
+                        <td>${port.pid}</td>
+                        <td>${port.name}</td>
+                        <td>${port.local_address}</td>
+                        <td>${port.remote_address}</td>
+                        <td>${port.status}</td>
+                        <td>${port.protocol}</td>
+                    </tr>`;
+                    portDataDiv.innerHTML += row;
+                });
             } else if (messageType === 'ip_addresses') {
-                updateIPAddresses(message[1]);
+                document.getElementById('local-ip').innerText = message[1].local_ipv4;
+                document.getElementById('external-ip').innerText = message[1].external_ip;
             } else if (messageType === 'users') {
-                updateLoggedInUsers(message[1]);
-            } else {
-                errorDiv.innerHTML = `<div class="stat" style="color:red;">Unexpected message: ${message}</div>`;
+                const userDataDiv = document.getElementById('user-data');
+                userDataDiv.innerHTML = '';
+                message[1].forEach(user => {
+                    const row = `<tr>
+                        <td>${user.name}</td>
+                        <td>${user.terminal}</td>
+                        <td>${user.host}</td>
+                        <td>${user.started}</td>
+                    </tr>`;
+                    userDataDiv.innerHTML += row;
+                });
             }
         };
 
-        ws.onclose = () => {
-            console.log('WebSocket connection closed');
-        };
+        ws.onclose = () => console.log('WebSocket connection closed');
 
-        function getStats() {
-            ws.send('stats');
-        }
+        setInterval(() => ws.send('stats'), 1000);
+        setInterval(() => ws.send('top_processes'), 2000);
+        setInterval(() => ws.send('system_overview'), 3000);
+        setInterval(() => ws.send('ports'), 3000);
+        setInterval(() => ws.send('ip_addresses'), 30000);
+        setInterval(() => ws.send('users'), 1000);
 
-        function getTopProcesses() {
-            ws.send('top_processes');
-        }
+        document.querySelectorAll('.tabs nav button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.tabs nav button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
 
-        function getSystemOverview() {
-            ws.send('system_overview');
-        }
-
-        function getPortData() {
-            ws.send('ports');
-        }
-
-        function getIPAddresses() {
-            ws.send('ip_addresses');
-        }
-
-        function getLoggedInUsers() {
-            ws.send('users');
-        }
-
-        function updateStats(stats) {
-            statsDiv.innerHTML = `
-                <div class="stat"><strong>CPU Usage:</strong> ${stats.cpu}%</div>
-                <div class="stat"><strong>Memory Usage:</strong> 
-                    ${((stats.memory.used / stats.memory.total) * 100).toFixed(2)}% 
-                    (${(stats.memory.used / 1e9).toFixed(2)} GB / ${(stats.memory.total / 1e9).toFixed(2)} GB)
-                </div>
-                <div class="stat"><strong>Disk Usage:</strong> 
-                    ${stats.disk.percent}% 
-                    (${(stats.disk.used / 1e9).toFixed(2)} GB / ${(stats.disk.total / 1e9).toFixed(2)} GB)
-                </div>
-            `;
-        }
-
-        function updateSystemOverview(overview) {
-            systemOverviewDiv.innerHTML = `
-                <div class="overview-stat"><strong>Tasks:</strong> ${overview.tasks}</div>
-                <div class="overview-stat"><strong>Threads:</strong> ${overview.threads}</div>
-                <div class="overview-stat"><strong>Running Processes:</strong> ${overview.running}</div>
-                <div class="overview-stat"><strong>Load Average:</strong> ${overview.load_average.join(", ")}</div>
-                <div class="overview-stat"><strong>Uptime:</strong> ${overview.uptime}</div>
-                <div class="overview-stat"><strong>Battery:</strong> ${
-                    typeof overview.battery === "string"
-                        ? overview.battery
-                        : `${overview.battery.percent}% (${overview.battery.power_plugged ? "Plugged In" : "On Battery"})`
-                }</div>
-            `;
-        }
-
-        function updateTopProcesses(processes) {
-            processStatsDiv.innerHTML = "";
-
-            processes.forEach(proc => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${proc.pid}</td>
-                    <td>${proc.username}</td>
-                    <td>${proc.name}</td>
-                    <td>${proc.priority}</td>
-                    <td>${proc.nice}</td>
-                    <td>${proc.virt_memory_mb.toFixed(2)}</td>
-                    <td>${proc.memory_mb.toFixed(2)}</td>
-                    <td>${proc.shr_memory_mb.toFixed(2)}</td>
-                    <td>${proc.status}</td>
-                    <td>${proc.cpu_percent.toFixed(1)}</td>
-                    <td>${proc.memory_percent.toFixed(1)}</td>
-                    <td>${proc.uptime}</td>
-                    <td>${proc.command}</td>
-                `;
-                processStatsDiv.appendChild(row);
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab).classList.add('active');
             });
-        }
-
-        function updatePortData(ports) {
-            portDataDiv.innerHTML = "";
-
-            ports.forEach(port => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${port.pid}</td>
-                    <td>${port.name}</td>
-                    <td>${port.local_address}</td>
-                    <td>${port.remote_address}</td>
-                    <td>${port.status}</td>
-                    <td>${port.protocol}</td>
-                `;
-                portDataDiv.appendChild(row);
-            });
-        }
-
-        function updateIPAddresses(ips) {
-            ipAddressesDiv.innerHTML = `
-                <div class="ip-stat"><strong>Local IPv4 Address:</strong> ${ips.local_ipv4}</div>
-                <div class="ip-stat"><strong>External IP Address:</strong> ${ips.external_ip}</div>
-            `;
-        }
-
-        function updateLoggedInUsers(users) {
-            userDataDiv.innerHTML = "";
-
-            users.forEach(user => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${user.name}</td>
-                    <td>${user.terminal}</td>
-                    <td>${user.host}</td>
-                    <td>${user.started}</td>
-                `;
-                userDataDiv.appendChild(row);
-            });
-        }
-
-        setInterval(getStats, 1000);
-        setInterval(getTopProcesses, 2000);
-        setInterval(getSystemOverview, 3000);
-        setInterval(getPortData, 3000);
-        setInterval(getIPAddresses, 30000);
-        setInterval(getLoggedInUsers, 1000);
+        });
     </script>
 </body>
 </html>
