@@ -8,7 +8,8 @@ import time
 from datetime import timedelta
 import socket
 import requests
-
+import os
+import subprocess
 
 def get_logged_in_users():
     users = []
@@ -194,8 +195,35 @@ async def get_system_stats():
     return stats
 
 
+async def get_system_logs(lines=50):
+    try:
+        # Detect the OS
+        current_os = os.uname().sysname
+
+        # Set log file path based on the OS
+        if current_os == "Darwin":  # macOS
+            log_file = "/var/log/system.log"
+        elif current_os == "Linux":
+            log_file = "/var/log/syslog"
+        else:
+            return [f"Unsupported OS: {current_os}"]
+
+        # Use the tail command to fetch the logs
+        result = subprocess.run(
+            ["tail", "-n", str(lines), log_file],
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode == 0:
+            return result.stdout.splitlines()
+        else:
+            return [f"Error fetching logs: {result.stderr.strip()}"]
+    except Exception as e:
+        return [f"Error occurred while fetching logs: {e}"]
+
+
 async def send_stats(request):
-    """Send system stats, top processes, system overview, process ports, and logged-in users to WebSocket client."""
     print("Client connected")
     ws = web.WebSocketResponse()
     await ws.prepare(request)
@@ -203,7 +231,15 @@ async def send_stats(request):
     try:
         async for msg in ws:
             if msg.type == web.WSMsgType.text:
-                if msg.data == "stats":
+                print("message:" + msg.data);
+                if msg.data.startswith("logs-"):
+                    try:
+                        lines = int(msg.data.split("-")[1])
+                    except (IndexError, ValueError):
+                        lines = 50 
+                    data = await get_system_logs(lines=lines)
+                    response = ["logs", data]
+                elif msg.data == "stats":
                     data = await get_system_stats()
                     response = ["stats", data]
                 elif msg.data == "top_processes":

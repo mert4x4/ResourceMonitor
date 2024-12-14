@@ -1,303 +1,451 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server Monitor</title>
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(to bottom, #e3f2fd, #bbdefb, #90caf9);
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        h1 {
-            color: #1e88e5;
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        .error {
-            margin: 10px 0;
-            color: red;
-            font-weight: bold;
-        }
-        .container {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        .card {
-            flex: 1;
-            padding: 20px;
-            background: linear-gradient(145deg, #ffffff, #e3f2fd);
-            border-radius: 16px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
-        }
-        .card strong {
-            display: block;
-            margin-bottom: 10px;
-            color: #1e88e5;
-            font-size: 1.2rem;
-        }
-        .tabs {
-            margin-top: 20px;
-            background: linear-gradient(145deg, #ffffff, #e3f2fd);
-            border-radius: 16px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-        .tabs nav {
-            display: flex;
-            border-bottom: 2px solid #ddd;
-            margin-bottom: 10px;
-        }
-        .tabs nav button {
-            flex: 1;
-            padding: 10px 0;
-            background: none;
-            border: none;
-            font-size: 1rem;
-            color: #1e88e5;
-            cursor: pointer;
-            transition: color 0.3s, border-bottom 0.3s;
-            border-bottom: 3px solid transparent;
-        }
-        .tabs nav button.active {
-            color: #1565c0;
-            border-bottom: 3px solid #1565c0;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            border-radius: 16px;
-            overflow: hidden;
-            background: linear-gradient(145deg, #ffffff, #e3f2fd);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #1565c0;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background-color: #f1f8ff;
-        }
-        tr:hover {
-            background-color: #e3f2fd;
-        }
-    </style>    
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Server Monitor</title>
+	<style>
+		body {
+			font-family: 'Roboto', sans-serif;
+			background: linear-gradient(to bottom, #e3f2fd, #bbdefb, #90caf9);
+			margin: 0;
+			padding: 20px;
+			color: #333;
+		}
+		h1 {
+			color: #1e88e5;
+			text-align: center;
+			margin-bottom: 20px;
+			font-size: 2rem;
+			font-weight: bold;
+		}
+		.error {
+			margin: 10px 0;
+			color: red;
+			font-weight: bold;
+		}
+		.container {
+			display: flex;
+			gap: 20px;
+			flex-wrap: wrap;
+			margin-bottom: 20px;
+		}
+		.card {
+			flex: 1;
+			padding: 20px;
+			background: linear-gradient(145deg, #ffffff, #e3f2fd);
+			border-radius: 16px;
+			box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+			text-align: center;
+			transition: transform 0.3s, box-shadow 0.3s;
+		}
+		.card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+		}
+		.card strong {
+			display: block;
+			margin-bottom: 10px;
+			color: #1e88e5;
+			font-size: 1.2rem;
+		}
+		.tabs {
+			margin-top: 20px;
+			background: linear-gradient(145deg, #ffffff, #e3f2fd);
+			border-radius: 16px;
+			box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+			padding: 20px;
+		}
+		.tabs nav {
+			display: flex;
+			border-bottom: 2px solid #ddd;
+			margin-bottom: 10px;
+		}
+		.tabs nav button {
+			flex: 1;
+			padding: 10px 0;
+			background: none;
+			border: none;
+			font-size: 1rem;
+			color: #1e88e5;
+			cursor: pointer;
+			transition: color 0.3s, border-bottom 0.3s;
+			border-bottom: 3px solid transparent;
+		}
+		.tabs nav button.active {
+			color: #1565c0;
+			border-bottom: 3px solid #1565c0;
+		}
+		.tab-content {
+			display: none;
+		}
+		.tab-content.active {
+			display: block;
+		}
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 20px;
+			border-radius: 16px;
+			overflow: hidden;
+			background: linear-gradient(145deg, #ffffff, #e3f2fd);
+			box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+		}
+		th, td {
+			border: 1px solid #ddd;
+			padding: 12px;
+			text-align: left;
+		}
+		th {
+			background-color: #1565c0;
+			color: white;
+		}
+		tr:nth-child(even) {
+			background-color: #f1f8ff;
+		}
+		tr:hover {
+			background-color: #e3f2fd;
+		}
+		
+		.ring {
+			position: relative;
+			width: 120px;
+			height: 120px;
+			margin: 0 auto 20px;
+			background: transparent;
+			border-radius: 50%;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+			overflow: hidden;
+		}
+		
+		.ring::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			border-radius: 50%;
+			background: conic-gradient(#1e88e5 calc(var(--percentage, 0) * 1%), #e3f2fd calc(var(--percentage, 0) * 1%));
+			z-index: 1;
+		}
+		
+		.ring::after {
+			content: '';
+			position: absolute;
+			top: 15%; /* Make the cutout smaller */
+			left: 15%; /* Make the cutout smaller */
+			width: 70%; /* Increase the inner circle size */
+			height: 70%; /* Increase the inner circle size */
+			background: radial-gradient(circle, #e3f2fd, #bbdefb);
+			border-radius: 50%;
+			z-index: 2;
+		}
+		
+		.ring-text {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			font-size: 1.4rem;
+			font-weight: bold;
+			color: white;
+			z-index: 3;
+			text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+		}
+		
+		
+		
+		
+		
+		
+	</style>    
 </head>
 <body>
-    <h1>Real-time Server Monitor</h1>
-    <div class="error" id="error"></div>
+	<h1>Real-time Server Monitor</h1>
+	<div class="error" id="error"></div>
+	
+	<div class="container">
+		<div class="card grouped-card">
+			<strong>System Resources</strong>
+			<div><strong>CPU Usage</strong><span id="cpu-usage"></span>%</div>
+			
+			<div class="ring" id="cpu-ring">
+				<div class="ring-text" id="cpu-ring-text">0%</div>
+			</div>
+			
+			
+			<div><strong>Memory Usage</strong><span id="memory-usage"></span></div>
+			<div class="ring" id="memory-ring">
+				<div class="ring-text" id="memory-ring-text">0%</div>
+			</div>
+			
+			
+			
+			<div><strong>Disk Usage</strong><span id="disk-usage"></span></div>
+			<div class="ring" id="disk-ring">
+				<div class="ring-text" id="disk-ring-text">0%</div>
+			</div>
+			
+			
+		</div>
+		
+		<div class="card grouped-card">
+			<strong>System Overview</strong>
+			<div><strong>Tasks</strong><span id="tasks"></span></div>
+			<div><strong>Threads</strong><span id="threads"></span></div>
+			<div><strong>Running Processes</strong><span id="running"></span></div>
+			<div><strong>Load Average</strong><span id="load-average"></span></div>
+		</div>
+		
+		<div class="card grouped-card">
+			<strong>System Info</strong>
+			<div><strong>Uptime</strong><span id="uptime"></span></div>
+			<div><strong>Battery</strong><span id="battery"></span></div>
+			
+			<div class="ring" id="battery-ring">
+				<div class="ring-text" id="battery-ring-text">0%</div>
+			</div>
+			
+		</div>
+		
+		<div class="card grouped-card">
+			<strong>IP Addresses</strong>
+			<div><strong>Local IPv4 Address</strong><span id="local-ip"></span></div>
+			<div><strong>External IP Address</strong><span id="external-ip"></span></div>
+		</div>
+	</div>
+	
+	<div class="tabs">
+		<nav>
+			<button class="active" data-tab="top-processes">Top Processes</button>
+			<button data-tab="port-data">Port Data</button>
+			<button data-tab="logged-in-users">Logged-in Users</button>
+			<button data-tab="system-logs">System Logs</button>
+		</nav>
+		<div id="top-processes" class="tab-content active">
+			<h2>Top Processes</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>PID</th>
+						<th>User</th>
+						<th>Name</th>
+						<th>PR</th>
+						<th>NI</th>
+						<th>VIRT (MB)</th>
+						<th>RES (MB)</th>
+						<th>SHR (MB)</th>
+						<th>S</th>
+						<th>CPU (%)</th>
+						<th>Memory (%)</th>
+						<th>TIME+</th>
+						<th>Command</th>
+					</tr>
+				</thead>
+				<tbody id="process-stats"></tbody>
+			</table>
+		</div>
+		<div id="port-data" class="tab-content">
+			<h2>Port Data</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>PID</th>
+						<th>Name</th>
+						<th>Local Address</th>
+						<th>Remote Address</th>
+						<th>Status</th>
+						<th>Protocol</th>
+					</tr>
+				</thead>
+				<tbody id="port-data-rows"></tbody>
+			</table>
+		</div>
+		<div id="logged-in-users" class="tab-content">
+			<h2>Logged-in Users</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Terminal</th>
+						<th>Host</th>
+						<th>Login Time</th>
+					</tr>
+				</thead>
+				<tbody id="user-data"></tbody>
+			</table>
+		</div>
 
-    <div class="container">
-        <div class="card grouped-card">
-            <strong>System Resources</strong>
-            <div><strong>CPU Usage</strong><span id="cpu-usage"></span>%</div>
-            <div><strong>Memory Usage</strong><span id="memory-usage"></span></div>
-            <div><strong>Disk Usage</strong><span id="disk-usage"></span></div>
-        </div>
+		<div id="system-logs" class="tab-content">
+			<h2>System Logs</h2>
+			<div>
+				<label for="log-lines">Lines to show:</label>
+				<input type="range" id="log-lines" min="10" max="500" step="10" value="50">
+				<span id="log-lines-value">50</span>
+			</div>
+			<div class="log-container">
+				<pre id="system-logs-output" style="background: #f1f8ff; padding: 10px; border-radius: 8px; overflow-y: auto; max-height: 400px;"></pre>
+			</div>
+		</div>
 
-        <div class="card grouped-card">
-            <strong>System Overview</strong>
-            <div><strong>Tasks</strong><span id="tasks"></span></div>
-            <div><strong>Threads</strong><span id="threads"></span></div>
-            <div><strong>Running Processes</strong><span id="running"></span></div>
-            <div><strong>Load Average</strong><span id="load-average"></span></div>
-        </div>
+	</div>
+	
+	<script>
+		const server_url = 'wss://' + location.host + location.pathname.replace('monitor', 'ws');
+		const ws = new WebSocket(server_url);
+		
+		ws.onopen = () => console.log('WebSocket connected');
+		
+		ws.onerror = (e) => {
+			document.getElementById('error').innerText = `Error: ${e.message}`;
+		};
 
-        <div class="card grouped-card">
-            <strong>System Info</strong>
-            <div><strong>Uptime</strong><span id="uptime"></span></div>
-            <div><strong>Battery</strong><span id="battery"></span></div>
-        </div>
 
-        <div class="card grouped-card">
-            <strong>IP Addresses</strong>
-            <div><strong>Local IPv4 Address</strong><span id="local-ip"></span></div>
-            <div><strong>External IP Address</strong><span id="external-ip"></span></div>
-        </div>
-    </div>
 
-    <div class="tabs">
-        <nav>
-            <button class="active" data-tab="top-processes">Top Processes</button>
-            <button data-tab="port-data">Port Data</button>
-            <button data-tab="logged-in-users">Logged-in Users</button>
-        </nav>
-        <div id="top-processes" class="tab-content active">
-            <h2>Top Processes</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>PID</th>
-                        <th>User</th>
-                        <th>Name</th>
-                        <th>PR</th>
-                        <th>NI</th>
-                        <th>VIRT (MB)</th>
-                        <th>RES (MB)</th>
-                        <th>SHR (MB)</th>
-                        <th>S</th>
-                        <th>CPU (%)</th>
-                        <th>Memory (%)</th>
-                        <th>TIME+</th>
-                        <th>Command</th>
-                    </tr>
-                </thead>
-                <tbody id="process-stats"></tbody>
-            </table>
-        </div>
-        <div id="port-data" class="tab-content">
-            <h2>Port Data</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>PID</th>
-                        <th>Name</th>
-                        <th>Local Address</th>
-                        <th>Remote Address</th>
-                        <th>Status</th>
-                        <th>Protocol</th>
-                    </tr>
-                </thead>
-                <tbody id="port-data-rows"></tbody>
-            </table>
-        </div>
-        <div id="logged-in-users" class="tab-content">
-            <h2>Logged-in Users</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Terminal</th>
-                        <th>Host</th>
-                        <th>Login Time</th>
-                    </tr>
-                </thead>
-                <tbody id="user-data"></tbody>
-            </table>
-        </div>
-    </div>
+		
+		const updateRing = (id, percentage) => {
+			const ring = document.getElementById(id);
+			const text = document.getElementById(`${id}-text`);
+			ring.style.setProperty('--percentage', percentage);
+			text.textContent = `${percentage}%`;
 
-    <script>
-        const server_url = 'wss://' + location.host + location.pathname.replace('monitor', 'ws');
-        const ws = new WebSocket(server_url);
 
-        ws.onopen = () => console.log('WebSocket connected');
 
-        ws.onerror = (e) => {
-            document.getElementById('error').innerText = `Error: ${e.message}`;
-        };
+		};
+		
+		ws.onmessage = (event) => {
+			const message = JSON.parse(event.data);
+			const messageType = message[0];
+			
+			if (messageType === 'stats') {
+				const cpuUsage = message[1].cpu.toFixed(2);
+				document.getElementById('cpu-usage').innerText = `${cpuUsage}%`;
+				updateRing("cpu-ring", cpuUsage);
+				
+				const memoryUsed = message[1].memory.used;
+				const memoryTotal = message[1].memory.total;
+				const memoryUsage = ((memoryUsed / memoryTotal) * 100).toFixed(2);
+				document.getElementById('memory-usage').innerText = `${memoryUsage}% (${(memoryUsed / 1e9).toFixed(2)} GB / ${(memoryTotal / 1e9).toFixed(2)} GB)`;
+				updateRing("memory-ring", memoryUsage);
+				
+				const diskUsage = message[1].disk.percent.toFixed(2);
+				document.getElementById('disk-usage').innerText = `${diskUsage}% (${(message[1].disk.used / 1e9).toFixed(2)} GB / ${(message[1].disk.total / 1e9).toFixed(2)} GB)`;
+				updateRing("disk-ring", diskUsage);
+			} else if (messageType === 'top_processes') {
+				// Populate the Top Processes Table
+				const processStatsDiv = document.getElementById('process-stats');
+				processStatsDiv.innerHTML = '';
+				message[1].forEach(proc => {
+					const row = `<tr>
+						<td>${proc.pid}</td>
+						<td>${proc.username}</td>
+						<td>${proc.name}</td>
+						<td>${proc.priority}</td>
+						<td>${proc.nice}</td>
+						<td>${proc.virt_memory_mb.toFixed(2)}</td>
+						<td>${proc.memory_mb.toFixed(2)}</td>
+						<td>${proc.shr_memory_mb.toFixed(2)}</td>
+						<td>${proc.status}</td>
+						<td>${proc.cpu_percent.toFixed(1)}</td>
+						<td>${proc.memory_percent.toFixed(1)}</td>
+						<td>${proc.uptime}</td>
+						<td>${proc.command}</td>
+					</tr>`;
+						processStatsDiv.innerHTML += row;
+					});
+				} else if (messageType === 'system_overview') {
+					document.getElementById('tasks').innerText = message[1].tasks;
+					document.getElementById('threads').innerText = message[1].threads;
+					document.getElementById('running').innerText = message[1].running;
+					document.getElementById('load-average').innerText = message[1].load_average.join(', ');
+					document.getElementById('uptime').innerText = message[1].uptime;
+					document.getElementById('battery').innerText = typeof message[1].battery === 'string' ? message[1].battery : `${message[1].battery.percent}% (${message[1].battery.power_plugged ? 'Plugged In' : 'On Battery'})`;
+					
+					
+					const battery = message[1].battery
+					? (typeof message[1].battery === 'string'
+					? parseInt(message[1].battery, 10)
+					: message[1].battery.percent)
+					: 0;
+					
+					updateRing("battery-ring", battery);
+					
+				} else if (messageType === 'port_data') {
+					const portDataDiv = document.getElementById('port-data-rows');
+					portDataDiv.innerHTML = '';
+					message[1].forEach(port => {
+						const row = `<tr>
+						<td>${port.pid}</td>
+						<td>${port.name}</td>
+						<td>${port.local_address}</td>
+						<td>${port.remote_address}</td>
+						<td>${port.status}</td>
+						<td>${port.protocol}</td>
+					</tr>`;
+							portDataDiv.innerHTML += row;
+						});
+					} else if (messageType === 'ip_addresses') {
+						document.getElementById('local-ip').innerText = message[1].local_ipv4;
+						document.getElementById('external-ip').innerText = message[1].external_ip;
+					} else if (messageType === 'users') {
+						const userDataDiv = document.getElementById('user-data');
+						userDataDiv.innerHTML = '';
+						message[1].forEach(user => {
+							const row = `<tr>
+						<td>${user.name}</td>
+						<td>${user.terminal}</td>
+						<td>${user.host}</td>
+						<td>${user.started}</td>
+					</tr>`;
+								userDataDiv.innerHTML += row;
+							});
+						}
+						else if (messageType === 'logs') {
+        					const logsOutput = document.getElementById('system-logs-output');
+        					logsOutput.textContent = message[1].join('\n');
+    						}
 
-        ws.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            const messageType = message[0];
+					};
 
-            if (messageType === 'stats') {
-                document.getElementById('cpu-usage').innerText = message[1].cpu;
-                document.getElementById('memory-usage').innerText = `${((message[1].memory.used / message[1].memory.total) * 100).toFixed(2)}% (${(message[1].memory.used / 1e9).toFixed(2)} GB / ${(message[1].memory.total / 1e9).toFixed(2)} GB)`;
-                document.getElementById('disk-usage').innerText = `${message[1].disk.percent}% (${(message[1].disk.used / 1e9).toFixed(2)} GB / ${(message[1].disk.total / 1e9).toFixed(2)} GB)`;
-            } else if (messageType === 'top_processes') {
-                const processStatsDiv = document.getElementById('process-stats');
-                processStatsDiv.innerHTML = '';
-                message[1].forEach(proc => {
-                    const row = `<tr>
-                        <td>${proc.pid}</td>
-                        <td>${proc.username}</td>
-                        <td>${proc.name}</td>
-                        <td>${proc.priority}</td>
-                        <td>${proc.nice}</td>
-                        <td>${proc.virt_memory_mb.toFixed(2)}</td>
-                        <td>${proc.memory_mb.toFixed(2)}</td>
-                        <td>${proc.shr_memory_mb.toFixed(2)}</td>
-                        <td>${proc.status}</td>
-                        <td>${proc.cpu_percent.toFixed(1)}</td>
-                        <td>${proc.memory_percent.toFixed(1)}</td>
-                        <td>${proc.uptime}</td>
-                        <td>${proc.command}</td>
-                    </tr>`;
-                    processStatsDiv.innerHTML += row;
-                });
-            } else if (messageType === 'system_overview') {
-                document.getElementById('tasks').innerText = message[1].tasks;
-                document.getElementById('threads').innerText = message[1].threads;
-                document.getElementById('running').innerText = message[1].running;
-                document.getElementById('load-average').innerText = message[1].load_average.join(', ');
-                document.getElementById('uptime').innerText = message[1].uptime;
-                document.getElementById('battery').innerText = typeof message[1].battery === 'string' ? message[1].battery : `${message[1].battery.percent}% (${message[1].battery.power_plugged ? 'Plugged In' : 'On Battery'})`;
-            } else if (messageType === 'port_data') {
-                const portDataDiv = document.getElementById('port-data-rows');
-                portDataDiv.innerHTML = '';
-                message[1].forEach(port => {
-                    const row = `<tr>
-                        <td>${port.pid}</td>
-                        <td>${port.name}</td>
-                        <td>${port.local_address}</td>
-                        <td>${port.remote_address}</td>
-                        <td>${port.status}</td>
-                        <td>${port.protocol}</td>
-                    </tr>`;
-                    portDataDiv.innerHTML += row;
-                });
-            } else if (messageType === 'ip_addresses') {
-                document.getElementById('local-ip').innerText = message[1].local_ipv4;
-                document.getElementById('external-ip').innerText = message[1].external_ip;
-            } else if (messageType === 'users') {
-                const userDataDiv = document.getElementById('user-data');
-                userDataDiv.innerHTML = '';
-                message[1].forEach(user => {
-                    const row = `<tr>
-                        <td>${user.name}</td>
-                        <td>${user.terminal}</td>
-                        <td>${user.host}</td>
-                        <td>${user.started}</td>
-                    </tr>`;
-                    userDataDiv.innerHTML += row;
-                });
-            }
-        };
+					const logSlider = document.getElementById('log-lines');
+					const logLinesValue = document.getElementById('log-lines-value');
+					const logsOutput = document.getElementById('system-logs-output');
 
-        ws.onclose = () => console.log('WebSocket connection closed');
+					logSlider.addEventListener('input', () => {
+						logLinesValue.textContent = logSlider.value;
+						ws.send(`lines-${logSlider.value}`);
+						console.log(logSlider.value);
+					});
+					
+					ws.onclose = () => console.log('WebSocket connection closed');
+					
+					setInterval(() => ws.send('stats'), 1000);
+					setInterval(() => ws.send('top_processes'), 2000);
+					setInterval(() => ws.send('system_overview'), 3000);
+					setInterval(() => ws.send('ports'), 3000);
+					setInterval(() => ws.send('ip_addresses'), 30000);
+					setInterval(() => ws.send('users'), 5000);
+					setInterval(() => {
+						const logLines = document.getElementById('log-lines').value;
+						ws.send(`logs-${logLines}`);
+						console.log(logLines);
+					}, 10000); 
+					
+					document.querySelectorAll('.tabs nav button').forEach(button => {
+						button.addEventListener('click', () => {
+							document.querySelectorAll('.tabs nav button').forEach(btn => btn.classList.remove('active'));
+							document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+							
+							button.classList.add('active');
+							document.getElementById(button.dataset.tab).classList.add('active');
+						});
+					});
 
-        setInterval(() => ws.send('stats'), 1000);
-        setInterval(() => ws.send('top_processes'), 2000);
-        setInterval(() => ws.send('system_overview'), 3000);
-        setInterval(() => ws.send('ports'), 3000);
-        setInterval(() => ws.send('ip_addresses'), 30000);
-        setInterval(() => ws.send('users'), 1000);
 
-        document.querySelectorAll('.tabs nav button').forEach(button => {
-            button.addEventListener('click', () => {
-                document.querySelectorAll('.tabs nav button').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
 
-                button.classList.add('active');
-                document.getElementById(button.dataset.tab).classList.add('active');
-            });
-        });
-    </script>
-</body>
+
+
+		</script>
+	</body>
 </html>
