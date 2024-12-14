@@ -309,9 +309,6 @@
 			const text = document.getElementById(`${id}-text`);
 			ring.style.setProperty('--percentage', percentage);
 			text.textContent = `${percentage}%`;
-
-
-
 		};
 		
 		ws.onmessage = (event) => {
@@ -414,16 +411,21 @@
 
 					logSlider.addEventListener('input', () => {
 						logLinesValue.textContent = logSlider.value;
-						ws.send(`lines-${logSlider.value}`);
-						console.log(logSlider.value);
+						const logLines = document.getElementById('log-lines').value;
 					});
 					
+					logSlider.addEventListener('change', () => {
+						const logLines = document.getElementById('log-lines').value;
+						ws.send(`logs-${logLines}`);
+						console.log(`Log lines requested: ${logLines}`);
+					});
+
 					ws.onclose = () => console.log('WebSocket connection closed');
 					
-					setInterval(() => ws.send('stats'), 1000);
-					setInterval(() => ws.send('top_processes'), 2000);
-					setInterval(() => ws.send('system_overview'), 3000);
-					setInterval(() => ws.send('ports'), 3000);
+					setInterval(() => ws.send('stats'), 4000);
+					setInterval(() => ws.send('top_processes'), 4000);
+					setInterval(() => ws.send('system_overview'), 4000);
+					setInterval(() => ws.send('ports'), 4000);
 					setInterval(() => ws.send('ip_addresses'), 30000);
 					setInterval(() => ws.send('users'), 5000);
 					setInterval(() => {

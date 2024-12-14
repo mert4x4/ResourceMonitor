@@ -11,7 +11,7 @@ import requests
 import os
 import subprocess
 
-def get_logged_in_users():
+async def get_logged_in_users():
     users = []
     try:
         for user in psutil.users():
@@ -26,7 +26,7 @@ def get_logged_in_users():
     return users
 
 
-def get_ip_addresses():
+async def get_ip_addresses():
     result = {"local_ipv4": None, "external_ip": None}
 
     #get ipv4
@@ -47,7 +47,7 @@ def get_ip_addresses():
     return result
 
 
-def get_process_ports():
+async def get_process_ports():
     process_ports = []
 
     for proc in psutil.process_iter(['pid', 'name']):
@@ -79,7 +79,7 @@ def get_process_ports():
     return process_ports
 
 
-def get_system_overview():
+async def get_system_overview():
     overview = {}
 
     all_processes = list(psutil.process_iter())
@@ -118,7 +118,7 @@ def get_system_overview():
 
 
 
-def get_top_processes():
+async def get_top_processes():
     processes = []
 
     for proc in psutil.process_iter(['pid', 'name', 'memory_percent', 'username', 'cmdline', 'cpu_percent', 'memory_info', 'status', 'create_time', 'num_threads', 'nice']):
@@ -208,19 +208,21 @@ async def get_system_logs(lines=50):
         else:
             return [f"Unsupported OS: {current_os}"]
 
-        # Use the tail command to fetch the logs
-        result = subprocess.run(
-            ["tail", "-n", str(lines), log_file],
-            capture_output=True,
-            text=True,
+        # Use asyncio subprocess to fetch logs
+        process = await asyncio.create_subprocess_exec(
+            "tail", "-n", str(lines), log_file,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
         )
+        stdout, stderr = await process.communicate()
 
-        if result.returncode == 0:
-            return result.stdout.splitlines()
+        if process.returncode == 0:
+            return stdout.decode().splitlines()
         else:
-            return [f"Error fetching logs: {result.stderr.strip()}"]
+            return [f"Error fetching logs: {stderr.decode().strip()}"]
     except Exception as e:
         return [f"Error occurred while fetching logs: {e}"]
+
 
 
 async def send_stats(request):
@@ -243,19 +245,19 @@ async def send_stats(request):
                     data = await get_system_stats()
                     response = ["stats", data]
                 elif msg.data == "top_processes":
-                    data = get_top_processes()
+                    data = await get_top_processes()
                     response = ["top_processes", data]
                 elif msg.data == "system_overview":
-                    data = get_system_overview()
+                    data = await get_system_overview()
                     response = ["system_overview", data]
                 elif msg.data == "ports":
-                    data = get_process_ports()
+                    data = await get_process_ports()
                     response = ["port_data", data]
                 elif msg.data == "ip_addresses":
-                    data = get_ip_addresses()
+                    data = await get_ip_addresses()
                     response = ["ip_addresses", data]
                 elif msg.data == "users":
-                    data = get_logged_in_users()
+                    data = await get_logged_in_users()
                     response = ["users", data]
                 else:
                     response = ["error", "Invalid request"]
