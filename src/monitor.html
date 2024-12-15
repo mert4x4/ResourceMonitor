@@ -481,7 +481,7 @@
 						const count = document.getElementById('user-log-count').value;
 						ws.send(`last_users-${count}`);
 						
-					}, 1000); 
+					}, 10000); 
 					
 					document.querySelectorAll('.tabs nav button').forEach(button => {
 						button.addEventListener('click', () => {
