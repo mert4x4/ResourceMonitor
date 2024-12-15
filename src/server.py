@@ -197,18 +197,15 @@ async def get_system_stats():
 
 async def get_system_logs(lines=50):
     try:
-        # Detect the OS
         current_os = os.uname().sysname
 
-        # Set log file path based on the OS
-        if current_os == "Darwin":  # macOS
+        if current_os == "Darwin":
             log_file = "/var/log/system.log"
         elif current_os == "Linux":
             log_file = "/var/log/syslog"
         else:
             return [f"Unsupported OS: {current_os}"]
 
-        # Use asyncio subprocess to fetch logs
         process = await asyncio.create_subprocess_exec(
             "tail", "-n", str(lines), log_file,
             stdout=asyncio.subprocess.PIPE,
@@ -222,6 +219,25 @@ async def get_system_logs(lines=50):
             return [f"Error fetching logs: {stderr.decode().strip()}"]
     except Exception as e:
         return [f"Error occurred while fetching logs: {e}"]
+
+
+async def get_last_user_logs(count=10):
+    try:
+        process = await asyncio.create_subprocess_exec(
+            "last", "-n", str(count),
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, stderr = await process.communicate()
+
+        if process.returncode == 0:
+            logs = stdout.decode().strip().split("\n")
+            return logs
+        else:
+            return [f"Error fetching logs: {stderr.decode().strip()}"]
+    except Exception as e:
+        return [f"Error occurred while fetching logs: {e}"]
+
 
 
 
@@ -241,6 +257,13 @@ async def send_stats(request):
                         lines = 50 
                     data = await get_system_logs(lines=lines)
                     response = ["logs", data]
+                elif msg.data.startswith("last_users-"):
+                    try:
+                        count = int(msg.data.split("-")[1])
+                    except (IndexError, ValueError):
+                        count = 10
+                    data = await get_last_user_logs(count=count)
+                    response = ["last_users", data]
                 elif msg.data == "stats":
                     data = await get_system_stats()
                     response = ["stats", data]

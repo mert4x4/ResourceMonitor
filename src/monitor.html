@@ -222,6 +222,7 @@
 			<button data-tab="port-data">Port Data</button>
 			<button data-tab="logged-in-users">Logged-in Users</button>
 			<button data-tab="system-logs">System Logs</button>
+			<button data-tab="last-users">Last Users</button>
 		</nav>
 		<div id="top-processes" class="tab-content active">
 			<h2>Top Processes</h2>
@@ -277,6 +278,19 @@
 			</table>
 		</div>
 
+
+		<div id="last-users" class="tab-content">
+			<h2>Last X Users</h2>
+			<div>
+				<label for="user-log-count">Number of Users:</label>
+				<input type="range" id="user-log-count" min="1" max="50" step="1" value="10">
+				<span id="user-log-count-value">10</span>
+			</div>
+			<div class="log-container">
+				<pre id="user-logs-output" style="background: #f1f8ff; padding: 10px; border-radius: 8px; overflow-y: auto; max-height: 400px;"></pre>
+			</div>
+		</div>
+
 		<div id="system-logs" class="tab-content">
 			<h2>System Logs</h2>
 			<div>
@@ -288,6 +302,9 @@
 				<pre id="system-logs-output" style="background: #f1f8ff; padding: 10px; border-radius: 8px; overflow-y: auto; max-height: 400px;"></pre>
 			</div>
 		</div>
+
+
+		
 
 	</div>
 	
@@ -382,7 +399,14 @@
 					</tr>`;
 							portDataDiv.innerHTML += row;
 						});
-					} else if (messageType === 'ip_addresses') {
+					}
+					
+					else if (messageType === "last_users") {
+						const logs = message[1];
+						const userLogsOutput = document.getElementById("user-logs-output");
+						userLogsOutput.textContent = logs.join("\n");
+					}		
+					else if (messageType === 'ip_addresses') {
 						document.getElementById('local-ip').innerText = message[1].local_ipv4;
 						document.getElementById('external-ip').innerText = message[1].external_ip;
 					} else if (messageType === 'users') {
@@ -420,6 +444,26 @@
 						console.log(`Log lines requested: ${logLines}`);
 					});
 
+
+
+
+
+					const userLogSlider = document.getElementById("user-log-count");
+					const userLogCountValue = document.getElementById("user-log-count-value");
+					const userLogsOutput = document.getElementById("user-logs-output");
+
+					userLogSlider.addEventListener("input", () => {
+						userLogCountValue.textContent = userLogSlider.value;
+					});
+
+					userLogSlider.addEventListener("change", () => {
+						const userLogCount = userLogSlider.value;
+						ws.send(`users-${userLogCount}`);
+						console.log(`Requested last ${userLogCount} users`);
+					});
+
+
+
 					ws.onclose = () => console.log('WebSocket connection closed');
 					
 					setInterval(() => ws.send('stats'), 4000);
@@ -433,6 +477,11 @@
 						ws.send(`logs-${logLines}`);
 						console.log(logLines);
 					}, 10000); 
+					setInterval(() => {
+						const count = document.getElementById('user-log-count').value;
+						ws.send(`last_users-${count}`);
+						
+					}, 1000); 
 					
 					document.querySelectorAll('.tabs nav button').forEach(button => {
 						button.addEventListener('click', () => {
