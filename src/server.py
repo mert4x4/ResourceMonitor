@@ -9,7 +9,6 @@ from datetime import timedelta
 import socket
 import requests
 import os
-import subprocess
 
 async def get_logged_in_users():
     users = []
@@ -27,18 +26,24 @@ async def get_logged_in_users():
 
 
 async def get_ip_addresses():
-    result = {"local_ipv4": None, "external_ip": None}
-
-    #get ipv4
+    result = {"local_ipv4": [], "external_ip": None}
     try:
-        hostname = socket.gethostname()
-        result["local_ipv4"] = socket.gethostbyname(hostname)
+        addrs = psutil.net_if_addrs()
+        for interface, addresses in addrs.items():
+            for addr in addresses:
+                if addr.family == socket.AF_INET:
+                    result["local_ipv4"].append({
+                        "interface": interface,
+                        "ip_address": addr.address,
+                        "netmask": addr.netmask,
+                        "broadcast": addr.broadcast
+                    })
     except Exception as e:
-        result["local_ipv4"] = f"Error: {e}"
+        result["local_ipv4"] = [{"error": f"Error fetching local IPv4 addresses: {e}"}]
 
-    #get external ip adress
+    # Get external IP address
     try:
-        response = requests.get("https://api.ipify.org?format=json")
+        response = requests.get("https://api.ipify.org?format=json", timeout=5)
         response.raise_for_status()
         result["external_ip"] = response.json()["ip"]
     except Exception as e:
@@ -237,8 +242,6 @@ async def get_last_user_logs(count=10):
             return [f"Error fetching logs: {stderr.decode().strip()}"]
     except Exception as e:
         return [f"Error occurred while fetching logs: {e}"]
-
-
 
 
 async def send_stats(request):
