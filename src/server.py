@@ -243,6 +243,19 @@ async def get_last_user_logs(count=10):
     except Exception as e:
         return [f"Error occurred while fetching logs: {e}"]
 
+async def kill_process(pid):
+    try:
+        process = psutil.Process(pid)
+        process.terminate()
+        return {"status": "success", "message": f"Process {pid} terminated successfully."}
+    except psutil.NoSuchProcess:
+        return {"status": "error", "message": f"Error: Process {pid} does not exist."}
+    except psutil.AccessDenied:
+        return {"status": "error", "message": f"Error: Permission denied to terminate process {pid}."}
+    except Exception as e:
+        return {"status": "error", "message": f"Error terminating process {pid}: {e}"}
+
+
 
 async def send_stats(request):
     print("Client connected")
@@ -285,6 +298,14 @@ async def send_stats(request):
                 elif msg.data == "users":
                     data = await get_logged_in_users()
                     response = ["users", data]
+                elif msg.data.startswith("kill_process-"):
+                    try:
+                        pid = int(msg.data.split("-")[1])
+                        data = await kill_process(pid)
+                        response = ["kill_process",data]
+                    except (IndexError, ValueError):
+                        response = ["kill_process",{"status": "error", "message": "Error: Invalid PID format."}]
+                    await ws.send_str(json.dumps(response, default=str))
                 else:
                     response = ["error", "Invalid request"]
                 await ws.send_str(json.dumps(response, default=str))

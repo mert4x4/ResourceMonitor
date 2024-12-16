@@ -153,14 +153,14 @@
 			z-index: 3;
 			text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 		}
-
+		
 		th.ascending::after {
 			content: ' ▲';
 			font-size: 0.8rem;
 			color: #000;
 			margin-left: 5px;
 		}
-
+		
 		th.descending::after {
 			content: ' ▼';
 			font-size: 0.8rem;
@@ -234,6 +234,21 @@
 		</nav>
 		<div id="top-processes" class="tab-content active">
 			<h2>Top Processes</h2>
+			<div style="margin-bottom: 10px; display: flex; align-items: center;">
+				<input
+					id="pid-input"
+					type="number"
+					placeholder="Enter PID to kill"
+					style="margin-right: 10px; padding: 5px; border: 1px solid #ddd; border-radius: 4px;"
+				/>
+				<button
+					id="kill-pid-button"
+					style="padding: 5px 10px; background-color: #e53935; color: #fff; border: none; border-radius: 4px; cursor: pointer;"
+				>
+					Kill Process
+				</button>
+				<span id="kill-pid-outcome" style="margin-left: 10px; font-weight: bold; color: #333;"></span>
+			</div>
 			<table>
 				<thead>
 					<tr>
@@ -252,10 +267,11 @@
 						<th>Command</th>
 					</tr>
 				</thead>
-				
 				<tbody id="process-stats"></tbody>
 			</table>
 		</div>
+		
+		
 		<div id="port-data" class="tab-content">
 			<h2>Port Data</h2>
 			<table>
@@ -286,8 +302,8 @@
 				<tbody id="user-data"></tbody>
 			</table>
 		</div>
-
-
+		
+		
 		<div id="last-users" class="tab-content">
 			<h2>Last X Users</h2>
 			<div>
@@ -299,7 +315,7 @@
 				<pre id="user-logs-output" style="background: #f1f8ff; padding: 10px; border-radius: 8px; overflow-y: auto; max-height: 400px;"></pre>
 			</div>
 		</div>
-
+		
 		<div id="system-logs" class="tab-content">
 			<h2>System Logs</h2>
 			<div>
@@ -311,10 +327,10 @@
 				<pre id="system-logs-output" style="background: #f1f8ff; padding: 10px; border-radius: 8px; overflow-y: auto; max-height: 400px;"></pre>
 			</div>
 		</div>
-
-
 		
-
+		
+		
+		
 	</div>
 	
 	<script>
@@ -326,9 +342,9 @@
 		ws.onerror = (e) => {
 			document.getElementById('error').innerText = `Error: ${e.message}`;
 		};
-
-
-
+		
+		
+		
 		
 		const updateRing = (id, percentage) => {
 			const ring = document.getElementById(id);
@@ -416,20 +432,20 @@
 						userLogsOutput.textContent = logs.join("\n");
 					}		
 					else if (messageType === 'ip_addresses') {
-					const localIpList = document.getElementById('local-ip-list');
-					const externalIp = document.getElementById('external-ip');
-
-					localIpList.innerHTML = '';
-
-					message[1].local_ipv4.forEach(ipInfo => {
-						const listItem = document.createElement('li');
-						listItem.textContent = `Interface: ${ipInfo.interface}, IP: ${ipInfo.ip_address}, Netmask: ${ipInfo.netmask}, Broadcast: ${ipInfo.broadcast}`;
-						localIpList.appendChild(listItem);
-					});
-
-					externalIp.textContent = message[1].external_ip || 'Error retrieving external IP';
-				}
- 					else if (messageType === 'users') {
+						const localIpList = document.getElementById('local-ip-list');
+						const externalIp = document.getElementById('external-ip');
+						
+						localIpList.innerHTML = '';
+						
+						message[1].local_ipv4.forEach(ipInfo => {
+							const listItem = document.createElement('li');
+							listItem.textContent = `Interface: ${ipInfo.interface}, IP: ${ipInfo.ip_address}, Netmask: ${ipInfo.netmask}, Broadcast: ${ipInfo.broadcast}`;
+							localIpList.appendChild(listItem);
+						});
+						
+						externalIp.textContent = message[1].external_ip || 'Error retrieving external IP';
+					}
+					else if (messageType === 'users') {
 						const userDataDiv = document.getElementById('user-data');
 						userDataDiv.innerHTML = '';
 						message[1].forEach(user => {
@@ -443,16 +459,30 @@
 							});
 						}
 						else if (messageType === 'logs') {
-        					const logsOutput = document.getElementById('system-logs-output');
-        					logsOutput.textContent = message[1].join('\n');
-    						}
-
+							const logsOutput = document.getElementById('system-logs-output');
+							logsOutput.textContent = message[1].join('\n');
+						}
+						if (message[0] === 'kill_process') {
+							const outcomeLabel = document.getElementById('kill-pid-outcome');
+							const response = message[1];
+							//console.log("qweqweqweqweqweqweqw");
+							if (response.status === 'error') {
+								outcomeLabel.textContent = response.message;
+								outcomeLabel.style.color = '#e53935';
+							} else if (response.status === 'success') {
+								outcomeLabel.textContent = response.message;
+								outcomeLabel.style.color = '#4caf50';
+							} else {
+								outcomeLabel.textContent = 'Unexpected response from server.';
+								outcomeLabel.style.color = '#ffa726';
+							}
+						}						
 					};
-
+					
 					const logSlider = document.getElementById('log-lines');
 					const logLinesValue = document.getElementById('log-lines-value');
 					const logsOutput = document.getElementById('system-logs-output');
-
+					
 					logSlider.addEventListener('input', () => {
 						logLinesValue.textContent = logSlider.value;
 						const logLines = document.getElementById('log-lines').value;
@@ -463,27 +493,25 @@
 						ws.send(`logs-${logLines}`);
 						console.log(`Log lines requested: ${logLines}`);
 					});
-
-
-
-
-
+					
+					
 					const userLogSlider = document.getElementById("user-log-count");
 					const userLogCountValue = document.getElementById("user-log-count-value");
 					const userLogsOutput = document.getElementById("user-logs-output");
-
+					
 					userLogSlider.addEventListener("input", () => {
 						userLogCountValue.textContent = userLogSlider.value;
 					});
-
+					
 					userLogSlider.addEventListener("change", () => {
 						const userLogCount = userLogSlider.value;
 						ws.send(`users-${userLogCount}`);
 						console.log(`Requested last ${userLogCount} users`);
 					});
-
-
+					
+					
 					ws.onclose = () => console.log('WebSocket connection closed');
+					
 					
 					setInterval(() => ws.send('stats'), 4000);
 					setInterval(() => ws.send('top_processes'), 4000);
@@ -511,52 +539,57 @@
 							document.getElementById(button.dataset.tab).classList.add('active');
 						});
 					});
-
-					document.querySelectorAll('th').forEach(header => {
-						header.addEventListener('click', () => {
-							const table = header.closest('table');
-							const tbody = table.querySelector('tbody');
-							const rows = Array.from(tbody.querySelectorAll('tr'));
-							const index = Array.from(header.parentElement.children).indexOf(header);
-							const sortType = header.dataset.sort;
-							const isAscending = header.classList.contains('ascending');
-
-							header.parentElement.querySelectorAll('th').forEach(th => {
-								th.classList.remove('ascending', 'descending');
-							});
-
-							if (isAscending) {
-								header.classList.add('descending');
-								header.classList.remove('ascending');
-							} else {
-								header.classList.add('ascending');
-								header.classList.remove('descending');
-							}
-
-							const sortedRows = rows.sort((rowA, rowB) => {
-								const cellA = rowA.children[index].innerText.trim();
-								const cellB = rowB.children[index].innerText.trim();
-
-								if (sortType === 'number') {
-									if (isAscending) {
-										return cellB - cellA;
+					
+					document.querySelectorAll('table').forEach(table => {
+						table.querySelectorAll('th').forEach(header => {
+							header.addEventListener('click', () => {
+								const tbody = table.querySelector('tbody');
+								const rows = Array.from(tbody.querySelectorAll('tr'));
+								const index = Array.from(header.parentElement.children).indexOf(header);
+								const isAscending = header.classList.contains('ascending');
+								
+								table.querySelectorAll('th').forEach(th => th.classList.remove('ascending', 'descending'));
+								
+								header.classList.toggle('ascending', !isAscending);
+								header.classList.toggle('descending', isAscending);
+								
+								const sortType = header.dataset.sort || 'string';
+								
+								const sortedRows = rows.sort((rowA, rowB) => {
+									const cellA = rowA.children[index].innerText.trim();
+									const cellB = rowB.children[index].innerText.trim();
+									
+									if (sortType === 'number') {
+										return isAscending ? cellB - cellA : cellA - cellB;
 									} else {
-										return cellA - cellB;
+										return isAscending
+										? cellB.localeCompare(cellA, undefined, { numeric: true })
+										: cellA.localeCompare(cellB, undefined, { numeric: true });
 									}
-								} else {
-									if (isAscending) {
-										return cellB.localeCompare(cellA, undefined, { numeric: true });
-									} else {
-										return cellA.localeCompare(cellB, undefined, { numeric: true });
-									}
-								}
+								});
+								
+								sortedRows.forEach(row => tbody.appendChild(row));
 							});
-
-							sortedRows.forEach(row => tbody.appendChild(row));
 						});
 					});
 
+					document.getElementById('kill-pid-button').addEventListener('click', () => {
+						const pidInput = document.getElementById('pid-input').value.trim();
+						const outcomeLabel = document.getElementById('kill-pid-outcome');
 
+						if (pidInput === '' || isNaN(pidInput) || parseInt(pidInput, 10) <= 0) {
+							outcomeLabel.textContent = 'Invalid PID. Please enter a valid positive integer.';
+							outcomeLabel.style.color = '#e53935';
+							return;
+						}
+
+						const pid = parseInt(pidInput, 10);
+						ws.send(`kill_process-${pid}`);
+
+						document.getElementById('pid-input').value = '';
+						outcomeLabel.textContent = 'Killing process...';
+						outcomeLabel.style.color = '#1e88e5';
+					});
 
 
 		</script>
