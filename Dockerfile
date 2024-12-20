@@ -1,23 +1,25 @@
-# Use Python 3.12 as the base image
+# Base Image
 FROM python:3.12-slim
 
-# Set the working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Copy the requirements file to the container
-COPY requirements.txt .
-
-# Install the dependencies
+# Copy requirements file and install dependencies
+COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire project into the container
-COPY . .
+# Copy application files
+COPY src /app/src
+COPY hello.html /app/hello.html
+COPY monitor.html /app/monitor.html
+COPY cert /app/cert
 
-# Change to the directory containing server.py
-WORKDIR /app/src
+# Set environment variables for credentials
+ENV USERNAME=admin
+ENV PASSWORD_HASH=f307d19df6386be176ac13771b02c89ce71c2cb551ead8a6069931c6a9cb1215
 
-# Expose the port used by the application
+# Expose the application port
 EXPOSE 8765
 
-# Start the application
-CMD ["python", "server.py"]
+# Run the application
+CMD ["python", "/app/src/server.py"]

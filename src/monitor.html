@@ -185,10 +185,127 @@
 			color: #000;
 			margin-left: 5px;
 		}
+		/* Dark Mode Slider Toggle Styles */
+.dark-mode-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.toggle-label {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-label input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #4caf50; /* Green slider for dark mode */
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* General Dark Mode Adjustments */
+body.dark-mode {
+    background: linear-gradient(to bottom, #101010, #181818, #202020);
+    color: #e0e0e0;
+}
+
+.dark-mode h1 {
+    color: #4caf50;
+}
+
+.dark-mode .card {
+    background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+    color: #e0e0e0;
+    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode table {
+    background-color: #1c1c1c;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+.dark-mode th {
+    background-color: #333333;
+    color: #bdbdbd;
+}
+
+.dark-mode tr:nth-child(even) {
+    background-color: #262626;
+}
+
+.dark-mode tr:hover {
+    background-color: #333333;
+}
+
+.dark-mode .tabs nav button {
+    color: #bdbdbd;
+}
+
+.dark-mode .tabs nav button.active {
+    color: #4caf50;
+    border-bottom: 3px solid #4caf50;
+}
+
+.dark-mode .ring::before {
+    background: conic-gradient(#4caf50 calc(var(--percentage, 0) * 1%), #202020 calc(var(--percentage, 0) * 1%));
+}
+
+.dark-mode .ring-label {
+    color: #bdbdbd;
+}
+
+.dark-mode td {
+    color: #d3d3d3;
+}
+
+.dark-mode th {
+    font-weight: bold;
+}
 	</style>    
 </head>
 <body>
 	<h1>Real-time Server Monitor</h1>
+	<div class="dark-mode-toggle">
+		<label class="toggle-label">
+			<input type="checkbox" id="dark-mode-checkbox">
+			<span class="slider"></span>
+		</label>
+	</div>	
 	<div class="error" id="error"></div>
 	
 	<div class="container">
@@ -606,6 +723,28 @@
 						outcomeLabel.style.color = '#1e88e5';
 					});
 
+
+					document.addEventListener("DOMContentLoaded", function () {
+				const toggleCheckbox = document.getElementById("dark-mode-checkbox");
+				const isDarkMode = localStorage.getItem("darkMode") === "true";
+
+				// Apply saved preference
+				if (isDarkMode) {
+					document.body.classList.add("dark-mode");
+					toggleCheckbox.checked = true;
+				}
+
+				// Toggle dark mode
+				toggleCheckbox.addEventListener("change", function () {
+					if (this.checked) {
+						document.body.classList.add("dark-mode");
+						localStorage.setItem("darkMode", "true");
+					} else {
+						document.body.classList.remove("dark-mode");
+						localStorage.setItem("darkMode", "false");
+					}
+				});
+			});
 
 		</script>
 	</body>
