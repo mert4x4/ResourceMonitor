@@ -10,11 +10,14 @@ COPY requirements.txt .
 # Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the entire project to the working directory in the container
+# Copy the entire project into the container
 COPY . .
 
-# Expose the port used by the application (8765)
+# Change to the directory containing server.py
+WORKDIR /app/src
+
+# Expose the port used by the application
 EXPOSE 8765
 
-# Run the application
+# Start the application
 CMD ["python", "server.py"]
