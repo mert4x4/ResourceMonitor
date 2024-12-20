@@ -122,7 +122,6 @@ async def get_system_overview():
     return overview
 
 
-
 async def get_top_processes():
     processes = []
 
@@ -172,10 +171,10 @@ async def get_top_processes():
         except psutil.AccessDenied:
             continue
 
-    top_cpu_processes = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)[:10]
-
+    top_cpu_processes_ = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)
+    top_cpu_processes = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)[:800]
+    print("asdasdas: " + str(len(top_cpu_processes_)))
     return top_cpu_processes
-
 
 
 async def hello(request):
