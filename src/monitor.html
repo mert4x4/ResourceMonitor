@@ -237,8 +237,6 @@
 			transform: translateX(26px);
 		}
 		
-		/* Dark Mode General Adjustments */
-		/* Dark Mode Styling */
 		body.dark-mode {
 			background: linear-gradient(to bottom, #121212, #1a1a1a, #1f1f1f); /* Uniform dark gradient */
 			color: #cfcfcf; /* Soft gray text for readability */
@@ -577,8 +575,6 @@
 	};
 	
 	
-	
-	
 	ws.onmessage = (event) => {
 		const message = JSON.parse(event.data);
 		const messageType = message[0];
@@ -668,10 +664,8 @@
 			const ports = message[1];
 			const tableId = portDataDiv.id;
 			
-			// Clear the table
 			portDataDiv.innerHTML = '';
 			
-			// Populate the table with new data
 			ports.forEach(port => {
 				const row = document.createElement('tr');
 				row.innerHTML = `
@@ -685,7 +679,6 @@
 				portDataDiv.appendChild(row);
 			});
 			
-			// Apply sorting based on the current sort state
 			const sortConfig = sortState[tableId];
 			if (sortConfig && sortConfig.column !== null) {
 				const rows = Array.from(portDataDiv.querySelectorAll('tr'));

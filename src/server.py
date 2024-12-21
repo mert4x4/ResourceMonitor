@@ -12,7 +12,49 @@ import os
 import hashlib
 from aiohttp_session import get_session
 
+
+# Username and hashed password for authentication
+USERNAME = os.getenv("USERNAME", "admin")
+PASSWORD_HASH = os.getenv("PASSWORD_HASH", hashlib.sha256("mydarling".encode()).hexdigest())
+
+async def hello(request):
+    """Serves the login page and validates the user credentials"""
+
+    # Serves the log-in page when the GET request is received
+    if request.method == "GET":
+        path = pathlib.Path(__file__).parent.joinpath("hello.html")
+        return web.FileResponse(path)
+
+    # Handles the user credentials when the form gets submited
+    if request.method == "POST":
+        data = await request.post()
+        username = data.get("username")
+        password = data.get("password")
+
+        if username != USERNAME:
+            raise web.HTTPFound(f"/hello?username_error=Invalid+username")
+        elif hashlib.sha256(password.encode()).hexdigest() != PASSWORD_HASH:
+            raise web.HTTPFound(f"/hello?password_error=Invalid+password")
+        else:
+            # Redicerts to monitoring page if the log-in is succesfull
+            raise web.HTTPFound(f"/monitor?username={username}&password={password}")
+
+
+async def monitor(request):
+    username = request.query.get("username")
+    password = request.query.get("password")
+
+    # Validates the credentials in the query
+    if username != USERNAME or hashlib.sha256(password.encode()).hexdigest() != PASSWORD_HASH:
+        # Redirect to log-in page if the authentication fails
+        raise web.HTTPFound("/hello?username_error=Access+denied.+Please+log+in.")
+
+    # Serve the monitoring page if the authentication is succesfull
+    path = pathlib.Path(__file__).parent.joinpath("monitor.html")
+    return web.FileResponse(path)
+
 async def get_logged_in_users():
+    """Returns the current logged-in user list"""
     users = []
     try:
         for user in psutil.users():
@@ -28,7 +70,10 @@ async def get_logged_in_users():
 
 
 async def get_ip_addresses():
+    """Returns the network interface information"""
     result = {"local_ipv4": [], "external_ip": None}
+
+    # Get the information of all the network interfaces
     try:
         addrs = psutil.net_if_addrs()
         for interface, addresses in addrs.items():
@@ -43,7 +88,7 @@ async def get_ip_addresses():
     except Exception as e:
         result["local_ipv4"] = [{"error": f"Error fetching local IPv4 addresses: {e}"}]
 
-    # Get external IP address
+    # Get the external IP adress
     try:
         response = requests.get("https://api.ipify.org?format=json", timeout=5)
         response.raise_for_status()
@@ -55,6 +100,7 @@ async def get_ip_addresses():
 
 
 async def get_process_ports():
+    """Get all the open ports and their network information"""
     process_ports = []
 
     for proc in psutil.process_iter(['pid', 'name']):
@@ -87,6 +133,8 @@ async def get_process_ports():
 
 
 async def get_system_overview():
+    """Get system overview, such as tasks, threads, load, uptime, and battery status"""
+
     overview = {}
 
     all_processes = list(psutil.process_iter())
@@ -125,8 +173,14 @@ async def get_system_overview():
 
 
 async def get_top_processes():
+    """Get the resource consume rates and details of all processes.
+    Such as PID, name, memory usage percentage, cpu usage percentage
+    username who owns the process, command-line arguments of process etc."""
+
     processes = []
 
+
+    # The first iteration to fetch the CPU usage in order to get the accurate CPU percentage
     for proc in psutil.process_iter(['pid', 'name', 'memory_percent', 'username', 'cmdline', 'cpu_percent', 'memory_info', 'status', 'create_time', 'num_threads', 'nice']):
         try:
             proc.cpu_percent(interval=0)
@@ -135,8 +189,9 @@ async def get_top_processes():
         except psutil.AccessDenied:
             continue
 
-    time.sleep(1)
+    time.sleep(1) # Wait a while to measure the CPU usage accurately.
 
+    # The second iteration to collect the process details
     for proc in psutil.process_iter(['pid', 'name', 'memory_percent', 'cpu_percent', 'username', 'cmdline', 'memory_info', 'status', 'create_time', 'num_threads', 'nice']):
         try:
             proc_info = proc.info
@@ -173,48 +228,10 @@ async def get_top_processes():
         except psutil.AccessDenied:
             continue
 
-    top_cpu_processes_ = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)
-    top_cpu_processes = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)[:800]
-    print("asdasdas: " + str(len(top_cpu_processes_)))
-    return top_cpu_processes
-
-
-USERNAME = os.getenv("USERNAME", "admin")
-PASSWORD_HASH = os.getenv("PASSWORD_HASH", hashlib.sha256("mydarling".encode()).hexdigest())
-
-async def hello(request):
-    if request.method == "GET":
-        path = pathlib.Path(__file__).parent.joinpath("hello.html")
-        return web.FileResponse(path)
-
-    if request.method == "POST":
-        data = await request.post()
-        username = data.get("username")
-        password = data.get("password")
-
-        # Validate credentials
-        if username != USERNAME:
-            raise web.HTTPFound(f"/hello?username_error=Invalid+username")
-        elif hashlib.sha256(password.encode()).hexdigest() != PASSWORD_HASH:
-            raise web.HTTPFound(f"/hello?password_error=Invalid+password")
-        else:
-            # Redirect to /monitor with credentials in the query
-            raise web.HTTPFound(f"/monitor?username={username}&password={password}")
-
-
-async def monitor(request):
-    username = request.query.get("username")
-    password = request.query.get("password")
-
-    # Validate credentials
-    if username != USERNAME or hashlib.sha256(password.encode()).hexdigest() != PASSWORD_HASH:
-        raise web.HTTPFound("/hello?username_error=Access+denied.+Please+log+in.")
-
-    # Serve the monitor page if credentials are correct
-    path = pathlib.Path(__file__).parent.joinpath("monitor.html")
-    return web.FileResponse(path)
-
-
+    #top_cpu_processes_ = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)
+    #top_cpu_processes = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)[:800]
+    #print("asdasdas: " + str(len(top_cpu_processes_)))
+    return processes
 
 async def get_system_stats():
     """Collect system statistics."""
@@ -228,6 +245,9 @@ async def get_system_stats():
 
 
 async def get_system_logs(lines=50):
+    """Get the last X lines of system logs, default is 50"""
+
+    # Determine the OS to get the log files
     try:
         current_os = os.uname().sysname
 
@@ -238,6 +258,7 @@ async def get_system_logs(lines=50):
         else:
             return [f"Unsupported OS: {current_os}"]
 
+        # Gets the last X lines by creating a subprocess with tail command
         process = await asyncio.create_subprocess_exec(
             "tail", "-n", str(lines), log_file,
             stdout=asyncio.subprocess.PIPE,
@@ -254,6 +275,10 @@ async def get_system_logs(lines=50):
 
 
 async def get_last_user_logs(count=10):
+    """Get the last X user's log-in log-out details, default is 10"""
+
+
+    # Creates a subprocess with last command to get the logs
     try:
         process = await asyncio.create_subprocess_exec(
             "last", "-n", str(count),
@@ -270,10 +295,13 @@ async def get_last_user_logs(count=10):
     except Exception as e:
         return [f"Error occurred while fetching logs: {e}"]
 
+
 async def kill_process(pid):
+    """Terminate a process with its PID"""
+
     try:
-        process = psutil.Process(pid)
-        process.terminate()
+        process = psutil.Process(pid) # Get the process with PID
+        process.terminate() # Kill the process
         return {"status": "success", "message": f"Process {pid} terminated successfully."}
     except psutil.NoSuchProcess:
         return {"status": "error", "message": f"Error: Process {pid} does not exist."}
@@ -282,9 +310,9 @@ async def kill_process(pid):
     except Exception as e:
         return {"status": "error", "message": f"Error terminating process {pid}: {e}"}
 
-
-
 async def send_stats(request):
+    """Handles the web socket requests"""
+
     print("Client connected")
     ws = web.WebSocketResponse()
     await ws.prepare(request)
@@ -292,7 +320,7 @@ async def send_stats(request):
     try:
         async for msg in ws:
             if msg.type == web.WSMsgType.text:
-                print("message:" + msg.data);
+                #print("message:" + msg.data);
                 if msg.data.startswith("logs-"):
                     try:
                         lines = int(msg.data.split("-")[1])
@@ -361,7 +389,7 @@ def run():
     """Start WebSocket server."""
     ssl_context = create_ssl_context()
     app = web.Application()
-      # Add routes
+
     app.add_routes(
         [
             web.get("/ws", send_stats),
