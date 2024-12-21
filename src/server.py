@@ -23,12 +23,11 @@ import aiohttp_cors
 USERNAME = os.getenv("USERNAME", "admin")
 PASSWORD_HASH = os.getenv("PASSWORD_HASH", hashlib.sha256("mydarling".encode()).hexdigest())
 
+# Hardcoded base URL
+BASE_URL = "https://cs395.org/1017"
+
 async def hello(request):
     """Serves the login page and validates the user credentials"""
-
-    # Dynamically construct the base URL with user ID
-    user_id = os.getenv("USER_ID", "1017")  # Default to "1017" if USER_ID is not set
-    base_url = f"https://cs395.org/{user_id}"
 
     # Serve the login page when the GET request is received
     if request.method == "GET":
@@ -43,21 +42,17 @@ async def hello(request):
 
         if username != USERNAME:
             # Redirect to login with an invalid username error
-            raise web.HTTPFound(f"{base_url}/hello?username_error=Invalid+username")
+            raise web.HTTPFound(f"{BASE_URL}/hello?username_error=Invalid+username")
         elif hashlib.sha256(password.encode()).hexdigest() != PASSWORD_HASH:
             # Redirect to login with an invalid password error
-            raise web.HTTPFound(f"{base_url}/hello?password_error=Invalid+password")
+            raise web.HTTPFound(f"{BASE_URL}/hello?password_error=Invalid+password")
         else:
             # Redirect to monitoring page if the login is successful
-            raise web.HTTPFound(f"{base_url}/monitor?username={username}&password={password}")
+            raise web.HTTPFound(f"{BASE_URL}/monitor?username={username}&password={password}")
 
 
 async def monitor(request):
     """Serve the monitoring page"""
-
-    # Dynamically construct the base URL with user ID
-    user_id = os.getenv("USER_ID", "1017")  # Default to "1017" if USER_ID is not set
-    base_url = f"https://cs395.org/{user_id}"
 
     username = request.query.get("username")
     password = request.query.get("password")
@@ -65,11 +60,12 @@ async def monitor(request):
     # Validate the credentials
     if username != USERNAME or hashlib.sha256(password.encode()).hexdigest() != PASSWORD_HASH:
         # Redirect to login page if authentication fails
-        raise web.HTTPFound(f"{base_url}/hello?username_error=Access+denied.+Please+log+in.")
+        raise web.HTTPFound(f"{BASE_URL}/hello?username_error=Access+denied.+Please+log+in.")
 
     # Serve the monitoring page if authentication is successful
     path = pathlib.Path(__file__).parent.joinpath("monitor.html")
     return web.FileResponse(path)
+
 
 
 
