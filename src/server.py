@@ -27,8 +27,8 @@ async def hello(request):
     """Serves the login page and validates the user credentials"""
 
     # Dynamically construct the base URL with user ID
-    user_id = os.getenv("USER_ID", "default_id")  # Get user ID from environment
-    base_url = f"https://cs395.org/1017"
+    user_id = os.getenv("USER_ID", "1017")  # Default to "1017" if USER_ID is not set
+    base_url = f"https://cs395.org/{user_id}"
 
     # Serve the login page when the GET request is received
     if request.method == "GET":
@@ -52,13 +52,12 @@ async def hello(request):
             raise web.HTTPFound(f"{base_url}/monitor?username={username}&password={password}")
 
 
-
 async def monitor(request):
     """Serve the monitoring page"""
 
     # Dynamically construct the base URL with user ID
-    user_id = os.getenv("USER_ID", "default_id")  # Get user ID from environment
-    base_url = f"https://cs395.org/1017"
+    user_id = os.getenv("USER_ID", "1017")  # Default to "1017" if USER_ID is not set
+    base_url = f"https://cs395.org/{user_id}"
 
     username = request.query.get("username")
     password = request.query.get("password")
@@ -71,6 +70,7 @@ async def monitor(request):
     # Serve the monitoring page if authentication is successful
     path = pathlib.Path(__file__).parent.joinpath("monitor.html")
     return web.FileResponse(path)
+
 
 
 async def get_logged_in_users():
