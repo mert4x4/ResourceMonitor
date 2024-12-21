@@ -141,16 +141,16 @@
     </div>
     <script>
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const usernameError = urlParams.get("username_error");
-        const passwordError = urlParams.get("password_error");
+        const baseUrl = "https://cs395.org/1017"; // Hardcoded base URL
+        const usernameError = new URLSearchParams(`${baseUrl}/hello`).get("username_error");
+        const passwordError = new URLSearchParams(`${baseUrl}/hello`).get("password_error");
+
         if (usernameError) {
             document.getElementById("username-error").textContent = usernameError;
         }
         if (passwordError) {
             document.getElementById("password-error").textContent = passwordError;
         }
-
 
         // Dark mode for log-in page
         document.addEventListener("DOMContentLoaded", function () {
@@ -174,6 +174,7 @@
                 }
             });
         });
+
     </script>
 </body>
 </html>
