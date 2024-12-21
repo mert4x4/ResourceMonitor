@@ -15,8 +15,8 @@ import aiohttp_cors
 
 
 
-if os.path.exists("/host_proc"):
-    psutil.PROCFS_PATH = "/host_proc"
+#if os.path.exists("/host_proc"):
+#    psutil.PROCFS_PATH = "/host_proc"
 
 
 # Username and hashed password for authentication
