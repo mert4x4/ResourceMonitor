@@ -108,66 +108,69 @@
 		}
 		
 		.rings-container {
-			display: flex;
-			justify-content: space-evenly;
-			gap: 20px;
-			align-items: center;
-			margin-top: 10px;
-		}
-		
-		.ring-label {
-			margin-top: 5px;
-			font-size: 0.9rem;
-			color: #1e88e5;
-			text-align: center;
-		}
-		
-		.ring {
-			position: relative;
-			width: 80px;
-			height: 80px;
-			margin: 0 auto;
-			background: transparent;
-			border-radius: 50%;
-			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.3);
-			overflow: hidden;
-		}
-		
-		.ring::before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			border-radius: 50%;
-			background: conic-gradient(#1e88e5 calc(var(--percentage, 0) * 1%), #e3f2fd calc(var(--percentage, 0) * 1%));
-			z-index: 1;
-		}
-		
-		.ring::after {
-			content: '';
-			position: absolute;
-			top: 20%;
-			left: 20%;
-			width: 60%;
-			height: 60%;
-			background: radial-gradient(circle, #e3f2fd, #bbdefb);
-			border-radius: 50%;
-			z-index: 2;
-		}
-		
-		.ring-text {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			font-size: 1rem;
-			font-weight: bold;
-			color: white;
-			z-index: 3;
-			text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-		}
+    display: flex;
+    justify-content: space-evenly;
+    gap: 20px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.ring-label {
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: #1e88e5;
+    text-align: center;
+}
+
+.ring {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    background: transparent;
+    border-radius: 50%;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+}
+
+.ring::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(#1e88e5 calc(var(--percentage, 0) * 1%), #e3f2fd calc(var(--percentage, 0) * 1%));
+    z-index: 1;
+}
+
+.ring::after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle, #e3f2fd, #bbdefb);
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.ring-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    z-index: 3;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+
+
 		
 		th.ascending::after {
 			content: ' ▲';
@@ -182,10 +185,127 @@
 			color: #000;
 			margin-left: 5px;
 		}
+		/* Dark Mode Slider Toggle Styles */
+.dark-mode-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.toggle-label {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-label input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #4caf50; /* Green slider for dark mode */
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* General Dark Mode Adjustments */
+body.dark-mode {
+    background: linear-gradient(to bottom, #101010, #181818, #202020);
+    color: #e0e0e0;
+}
+
+.dark-mode h1 {
+    color: #4caf50;
+}
+
+.dark-mode .card {
+    background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+    color: #e0e0e0;
+    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode table {
+    background-color: #1c1c1c;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+.dark-mode th {
+    background-color: #333333;
+    color: #bdbdbd;
+}
+
+.dark-mode tr:nth-child(even) {
+    background-color: #262626;
+}
+
+.dark-mode tr:hover {
+    background-color: #333333;
+}
+
+.dark-mode .tabs nav button {
+    color: #bdbdbd;
+}
+
+.dark-mode .tabs nav button.active {
+    color: #4caf50;
+    border-bottom: 3px solid #4caf50;
+}
+
+.dark-mode .ring::before {
+    background: conic-gradient(#4caf50 calc(var(--percentage, 0) * 1%), #202020 calc(var(--percentage, 0) * 1%));
+}
+
+.dark-mode .ring-label {
+    color: #bdbdbd;
+}
+
+.dark-mode td {
+    color: #d3d3d3;
+}
+
+.dark-mode th {
+    font-weight: bold;
+}
 	</style>    
 </head>
 <body>
 	<h1>Real-time Server Monitor</h1>
+	<div class="dark-mode-toggle">
+		<label class="toggle-label">
+			<input type="checkbox" id="dark-mode-checkbox">
+			<span class="slider"></span>
+		</label>
+	</div>	
 	<div class="error" id="error"></div>
 	
 	<div class="container">
@@ -252,196 +372,178 @@
 			<h2>Top Processes</h2>
 			<div style="margin-bottom: 10px; display: flex; align-items: center;">
 				<input
-				id="pid-input"
-				type="number"
-				placeholder="Enter PID to kill"
-				style="margin-right: 10px; padding: 5px; border: 1px solid #ddd; border-radius: 4px;"
+					id="pid-input"
+					type="number"
+					placeholder="Enter PID to kill"
+					style="margin-right: 10px; padding: 5px; border: 1px solid #ddd; border-radius: 4px;"
 				/>
 				<button
-				id="kill-pid-button"
-				style="padding: 5px 10px; background-color: #e53935; color: #fff; border: none; border-radius: 4px; cursor: pointer;"
+					id="kill-pid-button"
+					style="padding: 5px 10px; background-color: #e53935; color: #fff; border: none; border-radius: 4px; cursor: pointer;"
 				>
-				Kill Process
-			</button>
-			<span id="kill-pid-outcome" style="margin-left: 10px; font-weight: bold; color: #333;"></span>
+					Kill Process
+				</button>
+				<span id="kill-pid-outcome" style="margin-left: 10px; font-weight: bold; color: #333;"></span>
+			</div>
+			<table>
+				<thead>
+					<tr>
+						<th>PID</th>
+						<th>User</th>
+						<th>Name</th>
+						<th>PR</th>
+						<th>NI</th>
+						<th>VIRT (MB)</th>
+						<th>RES (MB)</th>
+						<th>SHR (MB)</th>
+						<th>S</th>
+						<th>CPU (%)</th>
+						<th>Memory (%)</th>
+						<th>TIME+</th>
+						<th>Command</th>
+					</tr>
+				</thead>
+				<tbody id="process-stats"></tbody>
+			</table>
 		</div>
-		<table>
-			<thead>
-				<tr>
-					<th>PID</th>
-					<th>User</th>
-					<th>Name</th>
-					<th>PR</th>
-					<th>NI</th>
-					<th>VIRT (MB)</th>
-					<th>RES (MB)</th>
-					<th>SHR (MB)</th>
-					<th>S</th>
-					<th>CPU (%)</th>
-					<th>Memory (%)</th>
-					<th>TIME+</th>
-					<th>Command</th>
-				</tr>
-			</thead>
-			<tbody id="process-stats"></tbody>
-		</table>
-	</div>
-	
-	
-	<div id="port-data" class="tab-content">
-		<h2>Port Data</h2>
-		<table>
-			<thead>
-				<tr>
-					<th>PID</th>
-					<th>Name</th>
-					<th>Local Address</th>
-					<th>Remote Address</th>
-					<th>Status</th>
-					<th>Protocol</th>
-				</tr>
-			</thead>
-			<tbody id="port-data-rows"></tbody>
-		</table>
-	</div>
-	<div id="logged-in-users" class="tab-content">
-		<h2>Logged-in Users</h2>
-		<table>
-			<thead>
-				<tr>
-					<th>Name</th>
-					<th>Terminal</th>
-					<th>Host</th>
-					<th>Login Time</th>
-				</tr>
-			</thead>
-			<tbody id="user-data"></tbody>
-		</table>
-	</div>
-	
-	
-	<div id="last-users" class="tab-content">
-		<h2>Last X Users</h2>
-		<div>
-			<label for="user-log-count">Number of Users:</label>
-			<input type="range" id="user-log-count" min="1" max="50" step="1" value="10">
-			<span id="user-log-count-value">10</span>
-		</div>
-		<div class="log-container">
-			<pre id="user-logs-output" style="background: #f1f8ff; padding: 10px; border-radius: 8px; overflow-y: auto; max-height: 400px;"></pre>
-		</div>
-	</div>
-	
-	<div id="system-logs" class="tab-content">
-		<h2>System Logs</h2>
-		<div>
-			<label for="log-lines">Lines to show:</label>
-			<input type="range" id="log-lines" min="10" max="500" step="10" value="50">
-			<span id="log-lines-value">50</span>
-		</div>
-		<div class="log-container">
-			<pre id="system-logs-output" style="background: #f1f8ff; padding: 10px; border-radius: 8px; overflow-y: auto; max-height: 400px;"></pre>
-		</div>
-	</div>
-</div>
-
-<script>
-	const server_url = 'wss://' + location.host + location.pathname.replace('monitor', 'ws');
-	const ws = new WebSocket(server_url);
-	
-	ws.onopen = () => console.log('WebSocket connected');
-	
-	ws.onerror = (e) => {
-		document.getElementById('error').innerText = `Error: ${e.message}`;
-	};
-	
-	const updateRing = (id, percentage) => {
-		const ring = document.getElementById(id);
-		const text = document.getElementById(`${id}-text`);
-		ring.style.setProperty('--percentage', percentage);
-		text.textContent = `${percentage}%`;
-	};
-	
-	ws.onmessage = (event) => {
-		const message = JSON.parse(event.data);
-		const messageType = message[0];
 		
-		if (messageType === 'stats') {
-			const cpuUsage = message[1].cpu.toFixed(2);
-			document.getElementById('cpu-usage').innerText = `${cpuUsage}`;
-			updateRing("cpu-ring", cpuUsage);
+		
+		<div id="port-data" class="tab-content">
+			<h2>Port Data</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>PID</th>
+						<th>Name</th>
+						<th>Local Address</th>
+						<th>Remote Address</th>
+						<th>Status</th>
+						<th>Protocol</th>
+					</tr>
+				</thead>
+				<tbody id="port-data-rows"></tbody>
+			</table>
+		</div>
+		<div id="logged-in-users" class="tab-content">
+			<h2>Logged-in Users</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Terminal</th>
+						<th>Host</th>
+						<th>Login Time</th>
+					</tr>
+				</thead>
+				<tbody id="user-data"></tbody>
+			</table>
+		</div>
+		
+		
+		<div id="last-users" class="tab-content">
+			<h2>Last X Users</h2>
+			<div>
+				<label for="user-log-count">Number of Users:</label>
+				<input type="range" id="user-log-count" min="1" max="50" step="1" value="10">
+				<span id="user-log-count-value">10</span>
+			</div>
+			<div class="log-container">
+				<pre id="user-logs-output" style="background: #f1f8ff; padding: 10px; border-radius: 8px; overflow-y: auto; max-height: 400px;"></pre>
+			</div>
+		</div>
+		
+		<div id="system-logs" class="tab-content">
+			<h2>System Logs</h2>
+			<div>
+				<label for="log-lines">Lines to show:</label>
+				<input type="range" id="log-lines" min="10" max="500" step="10" value="50">
+				<span id="log-lines-value">50</span>
+			</div>
+			<div class="log-container">
+				<pre id="system-logs-output" style="background: #f1f8ff; padding: 10px; border-radius: 8px; overflow-y: auto; max-height: 400px;"></pre>
+			</div>
+		</div>
+	</div>
+	
+	<script>
+		const server_url = 'wss://' + location.host + location.pathname.replace('monitor', 'ws');
+		const ws = new WebSocket(server_url);
+		
+		ws.onopen = () => console.log('WebSocket connected');
+		
+		ws.onerror = (e) => {
+			document.getElementById('error').innerText = `Error: ${e.message}`;
+		};
+		
+		const updateRing = (id, percentage) => {
+			const ring = document.getElementById(id);
+			const text = document.getElementById(`${id}-text`);
+			ring.style.setProperty('--percentage', percentage);
+			text.textContent = `${percentage}%`;
+		};
+		
+		ws.onmessage = (event) => {
+			const message = JSON.parse(event.data);
+			const messageType = message[0];
 			
-			const memoryUsed = message[1].memory.used;
-			const memoryTotal = message[1].memory.total;
-			const memoryUsage = ((memoryUsed / memoryTotal) * 100).toFixed(2);
-			document.getElementById('memory-usage').innerText = `${memoryUsage}% (${(memoryUsed / 1e9).toFixed(2)} GB / ${(memoryTotal / 1e9).toFixed(2)} GB)`;
-			updateRing("memory-ring", memoryUsage);
-			
-			const diskUsage = message[1].disk.percent.toFixed(2);
-			document.getElementById('disk-usage').innerText = `${diskUsage}% (${(message[1].disk.used / 1e9).toFixed(2)} GB / ${(message[1].disk.total / 1e9).toFixed(2)} GB)`;
-			updateRing("disk-ring", diskUsage);
-		} else if (messageType === 'top_processes') {
-			const processStatsDiv = document.getElementById('process-stats');
-			const processes = message[1]; // All incoming process data
-			processStatsDiv.innerHTML = ''; // Clear existing rows
-			
-			const chunkSize = 50; // Render 50 rows at a time
-			let index = 0;
-			
-			function renderChunk() {
-				const fragment = document.createDocumentFragment();
-				for (let i = 0; i < chunkSize && index < processes.length; i++, index++) {
-					const proc = processes[index];
-					const row = document.createElement('tr');
-					row.innerHTML = `
-                <td>${proc.pid}</td>
-                <td>${proc.username}</td>
-                <td>${proc.name}</td>
-                <td>${proc.priority}</td>
-                <td>${proc.nice}</td>
-                <td>${proc.virt_memory_mb.toFixed(2)}</td>
-                <td>${proc.memory_mb.toFixed(2)}</td>
-                <td>${proc.shr_memory_mb.toFixed(2)}</td>
-                <td>${proc.status}</td>
-                <td>${proc.cpu_percent.toFixed(1)}</td>
-                <td>${proc.memory_percent.toFixed(1)}</td>
-                <td>${proc.uptime}</td>
-                <td>${proc.command}</td>
-            `;
-					fragment.appendChild(row);
-				}
+			if (messageType === 'stats') {
+				const cpuUsage = message[1].cpu.toFixed(2);
+				document.getElementById('cpu-usage').innerText = `${cpuUsage}`;
+				updateRing("cpu-ring", cpuUsage);
 				
-				processStatsDiv.appendChild(fragment);
+				const memoryUsed = message[1].memory.used;
+				const memoryTotal = message[1].memory.total;
+				const memoryUsage = ((memoryUsed / memoryTotal) * 100).toFixed(2);
+				document.getElementById('memory-usage').innerText = `${memoryUsage}% (${(memoryUsed / 1e9).toFixed(2)} GB / ${(memoryTotal / 1e9).toFixed(2)} GB)`;
+				updateRing("memory-ring", memoryUsage);
 				
-				// If there are more rows to render, schedule the next chunk
-				if (index < processes.length) {
-					requestAnimationFrame(renderChunk);
-				}
-			}
-			
-			renderChunk(); // Start rendering the first chunk
-		} else if (messageType === 'system_overview') {
-			document.getElementById('tasks').innerText = message[1].tasks;
-			document.getElementById('threads').innerText = message[1].threads;
-			document.getElementById('running').innerText = message[1].running;
-			document.getElementById('load-average').innerText = message[1].load_average.join(', ');
-			document.getElementById('uptime').innerText = message[1].uptime;
-			document.getElementById('battery').innerText = typeof message[1].battery === 'string' ? message[1].battery : `${message[1].battery.percent}% (${message[1].battery.power_plugged ? 'Plugged In' : 'On Battery'})`;
-			
-			
-			const battery = message[1].battery
-			? (typeof message[1].battery === 'string'
-			? parseInt(message[1].battery, 10)
-			: message[1].battery.percent)
-			: 0;
-			
-			updateRing("battery-ring", battery);
-			
-		} else if (messageType === 'port_data') {
-			const portDataDiv = document.getElementById('port-data-rows');
-			portDataDiv.innerHTML = '';
-			message[1].forEach(port => {
-				const row = `<tr>
+				const diskUsage = message[1].disk.percent.toFixed(2);
+				document.getElementById('disk-usage').innerText = `${diskUsage}% (${(message[1].disk.used / 1e9).toFixed(2)} GB / ${(message[1].disk.total / 1e9).toFixed(2)} GB)`;
+				updateRing("disk-ring", diskUsage);
+			} else if (messageType === 'top_processes') {
+				// Populate the Top Processes Table
+				const processStatsDiv = document.getElementById('process-stats');
+				processStatsDiv.innerHTML = '';
+				message[1].forEach(proc => {
+					const row = `<tr>
+						<td>${proc.pid}</td>
+						<td>${proc.username}</td>
+						<td>${proc.name}</td>
+						<td>${proc.priority}</td>
+						<td>${proc.nice}</td>
+						<td>${proc.virt_memory_mb.toFixed(2)}</td>
+						<td>${proc.memory_mb.toFixed(2)}</td>
+						<td>${proc.shr_memory_mb.toFixed(2)}</td>
+						<td>${proc.status}</td>
+						<td>${proc.cpu_percent.toFixed(1)}</td>
+						<td>${proc.memory_percent.toFixed(1)}</td>
+						<td>${proc.uptime}</td>
+						<td>${proc.command}</td>
+					</tr>`;
+						processStatsDiv.innerHTML += row;
+					});
+				} else if (messageType === 'system_overview') {
+					document.getElementById('tasks').innerText = message[1].tasks;
+					document.getElementById('threads').innerText = message[1].threads;
+					document.getElementById('running').innerText = message[1].running;
+					document.getElementById('load-average').innerText = message[1].load_average.join(', ');
+					document.getElementById('uptime').innerText = message[1].uptime;
+					document.getElementById('battery').innerText = typeof message[1].battery === 'string' ? message[1].battery : `${message[1].battery.percent}% (${message[1].battery.power_plugged ? 'Plugged In' : 'On Battery'})`;
+					
+					
+					const battery = message[1].battery
+					? (typeof message[1].battery === 'string'
+					? parseInt(message[1].battery, 10)
+					: message[1].battery.percent)
+					: 0;
+					
+					updateRing("battery-ring", battery);
+					
+				} else if (messageType === 'port_data') {
+					const portDataDiv = document.getElementById('port-data-rows');
+					portDataDiv.innerHTML = '';
+					message[1].forEach(port => {
+						const row = `<tr>
 						<td>${port.pid}</td>
 						<td>${port.name}</td>
 						<td>${port.local_address}</td>
@@ -449,177 +551,201 @@
 						<td>${port.status}</td>
 						<td>${port.protocol}</td>
 					</tr>`;
-					portDataDiv.innerHTML += row;
-				});
-			}
-			
-			else if (messageType === "last_users") {
-				const logs = message[1];
-				const userLogsOutput = document.getElementById("user-logs-output");
-				userLogsOutput.textContent = logs.join("\n");
-			}		
-			else if (messageType === 'ip_addresses') {
-				const localIpList = document.getElementById('local-ip-list');
-				const externalIp = document.getElementById('external-ip');
-				
-				localIpList.innerHTML = '';
-				
-				message[1].local_ipv4.forEach(ipInfo => {
-					const listItem = document.createElement('li');
-					listItem.textContent = `Interface: ${ipInfo.interface}, IP: ${ipInfo.ip_address}, Netmask: ${ipInfo.netmask}, Broadcast: ${ipInfo.broadcast}`;
-					localIpList.appendChild(listItem);
-				});
-				
-				externalIp.textContent = message[1].external_ip || 'Error retrieving external IP';
-			}
-			else if (messageType === 'users') {
-				const userDataDiv = document.getElementById('user-data');
-				userDataDiv.innerHTML = '';
-				message[1].forEach(user => {
-					const row = `<tr>
+							portDataDiv.innerHTML += row;
+						});
+					}
+					
+					else if (messageType === "last_users") {
+						const logs = message[1];
+						const userLogsOutput = document.getElementById("user-logs-output");
+						userLogsOutput.textContent = logs.join("\n");
+					}		
+					else if (messageType === 'ip_addresses') {
+						const localIpList = document.getElementById('local-ip-list');
+						const externalIp = document.getElementById('external-ip');
+						
+						localIpList.innerHTML = '';
+						
+						message[1].local_ipv4.forEach(ipInfo => {
+							const listItem = document.createElement('li');
+							listItem.textContent = `Interface: ${ipInfo.interface}, IP: ${ipInfo.ip_address}, Netmask: ${ipInfo.netmask}, Broadcast: ${ipInfo.broadcast}`;
+							localIpList.appendChild(listItem);
+						});
+						
+						externalIp.textContent = message[1].external_ip || 'Error retrieving external IP';
+					}
+					else if (messageType === 'users') {
+						const userDataDiv = document.getElementById('user-data');
+						userDataDiv.innerHTML = '';
+						message[1].forEach(user => {
+							const row = `<tr>
 						<td>${user.name}</td>
 						<td>${user.terminal}</td>
 						<td>${user.host}</td>
 						<td>${user.started}</td>
 					</tr>`;
-						userDataDiv.innerHTML += row;
-					});
-				}
-				else if (messageType === 'logs') {
-					const logsOutput = document.getElementById('system-logs-output');
-					logsOutput.textContent = message[1].join('\n');
-				}
-				if (message[0] === 'kill_process') {
-					const outcomeLabel = document.getElementById('kill-pid-outcome');
-					const response = message[1];
-					//console.log("qweqweqweqweqweqweqw");
-					if (response.status === 'error') {
-						outcomeLabel.textContent = response.message;
-						outcomeLabel.style.color = '#e53935';
-					} else if (response.status === 'success') {
-						outcomeLabel.textContent = response.message;
-						outcomeLabel.style.color = '#4caf50';
-					} else {
-						outcomeLabel.textContent = 'Unexpected response from server.';
-						outcomeLabel.style.color = '#ffa726';
-					}
-				}						
-			};
-			
-			const logSlider = document.getElementById('log-lines');
-			const logLinesValue = document.getElementById('log-lines-value');
-			const logsOutput = document.getElementById('system-logs-output');
-			
-			logSlider.addEventListener('input', () => {
-				logLinesValue.textContent = logSlider.value;
-				const logLines = document.getElementById('log-lines').value;
-			});
-			
-			logSlider.addEventListener('change', () => {
-				const logLines = document.getElementById('log-lines').value;
-				ws.send(`logs-${logLines}`);
-				console.log(`Log lines requested: ${logLines}`);
-			});
-			
-			const userLogSlider = document.getElementById("user-log-count");
-			const userLogCountValue = document.getElementById("user-log-count-value");
-			const userLogsOutput = document.getElementById("user-logs-output");
-			
-			userLogSlider.addEventListener("input", () => {
-				userLogCountValue.textContent = userLogSlider.value;
-			});
-			
-			userLogSlider.addEventListener("change", () => {
-				const userLogCount = userLogSlider.value;
-				ws.send(`users-${userLogCount}`);
-				console.log(`Requested last ${userLogCount} users`);
-			});
-			
-			
-			ws.onclose = () => console.log('WebSocket connection closed');
-			
-			setInterval(() => ws.send('stats'), 4000);
-			setInterval(() => ws.send('top_processes'), 4000);
-			setInterval(() => ws.send('system_overview'), 4000);
-			setInterval(() => ws.send('ports'), 4000);
-			setInterval(() => ws.send('ip_addresses'), 10000);
-			setInterval(() => ws.send('users'), 5000);
-			setInterval(() => {
-				const logLines = document.getElementById('log-lines').value;
-				ws.send(`logs-${logLines}`);
-				//console.log(logLines);
-			}, 10000); 
-			setInterval(() => {
-				const count = document.getElementById('user-log-count').value;
-				ws.send(`last_users-${count}`);
-				
-			}, 10000); 
-			
-			document.querySelectorAll('.tabs nav button').forEach(button => {
-				button.addEventListener('click', () => {
-					document.querySelectorAll('.tabs nav button').forEach(btn => btn.classList.remove('active'));
-					document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-					
-					button.classList.add('active');
-					document.getElementById(button.dataset.tab).classList.add('active');
-				});
-			});
-			
-			document.querySelectorAll('table').forEach(table => {
-				table.querySelectorAll('th').forEach(header => {
-					header.addEventListener('click', () => {
-						const tbody = table.querySelector('tbody');
-						const rows = Array.from(tbody.querySelectorAll('tr'));
-						const index = Array.from(header.parentElement.children).indexOf(header);
-						const isAscending = header.classList.contains('ascending');
-						
-						table.querySelectorAll('th').forEach(th => th.classList.remove('ascending', 'descending'));
-						
-						header.classList.toggle('ascending', !isAscending);
-						header.classList.toggle('descending', isAscending);
-						
-						const sortType = header.dataset.sort || 'string';
-						
-						const sortedRows = rows.sort((rowA, rowB) => {
-							const cellA = rowA.children[index].innerText.trim();
-							const cellB = rowB.children[index].innerText.trim();
-							
-							if (sortType === 'number') {
-								return isAscending ? cellB - cellA : cellA - cellB;
+								userDataDiv.innerHTML += row;
+							});
+						}
+						else if (messageType === 'logs') {
+							const logsOutput = document.getElementById('system-logs-output');
+							logsOutput.textContent = message[1].join('\n');
+						}
+						if (message[0] === 'kill_process') {
+							const outcomeLabel = document.getElementById('kill-pid-outcome');
+							const response = message[1];
+							//console.log("qweqweqweqweqweqweqw");
+							if (response.status === 'error') {
+								outcomeLabel.textContent = response.message;
+								outcomeLabel.style.color = '#e53935';
+							} else if (response.status === 'success') {
+								outcomeLabel.textContent = response.message;
+								outcomeLabel.style.color = '#4caf50';
 							} else {
-								return isAscending
-								? cellB.localeCompare(cellA, undefined, { numeric: true })
-								: cellA.localeCompare(cellB, undefined, { numeric: true });
+								outcomeLabel.textContent = 'Unexpected response from server.';
+								outcomeLabel.style.color = '#ffa726';
 							}
-						});
-						
-						sortedRows.forEach(row => tbody.appendChild(row));
+						}						
+					};
+					
+					const logSlider = document.getElementById('log-lines');
+					const logLinesValue = document.getElementById('log-lines-value');
+					const logsOutput = document.getElementById('system-logs-output');
+					
+					logSlider.addEventListener('input', () => {
+						logLinesValue.textContent = logSlider.value;
+						const logLines = document.getElementById('log-lines').value;
 					});
+					
+					logSlider.addEventListener('change', () => {
+						const logLines = document.getElementById('log-lines').value;
+						ws.send(`logs-${logLines}`);
+						console.log(`Log lines requested: ${logLines}`);
+					});
+					
+					
+					const userLogSlider = document.getElementById("user-log-count");
+					const userLogCountValue = document.getElementById("user-log-count-value");
+					const userLogsOutput = document.getElementById("user-logs-output");
+					
+					userLogSlider.addEventListener("input", () => {
+						userLogCountValue.textContent = userLogSlider.value;
+					});
+					
+					userLogSlider.addEventListener("change", () => {
+						const userLogCount = userLogSlider.value;
+						ws.send(`users-${userLogCount}`);
+						console.log(`Requested last ${userLogCount} users`);
+					});
+					
+					
+					ws.onclose = () => console.log('WebSocket connection closed');
+					
+					
+					setInterval(() => ws.send('stats'), 4000);
+					setInterval(() => ws.send('top_processes'), 4000);
+					setInterval(() => ws.send('system_overview'), 4000);
+					setInterval(() => ws.send('ports'), 4000);
+					setInterval(() => ws.send('ip_addresses'), 10000);
+					setInterval(() => ws.send('users'), 5000);
+					setInterval(() => {
+						const logLines = document.getElementById('log-lines').value;
+						ws.send(`logs-${logLines}`);
+						console.log(logLines);
+					}, 10000); 
+					setInterval(() => {
+						const count = document.getElementById('user-log-count').value;
+						ws.send(`last_users-${count}`);
+						
+					}, 10000); 
+					
+					document.querySelectorAll('.tabs nav button').forEach(button => {
+						button.addEventListener('click', () => {
+							document.querySelectorAll('.tabs nav button').forEach(btn => btn.classList.remove('active'));
+							document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+							
+							button.classList.add('active');
+							document.getElementById(button.dataset.tab).classList.add('active');
+						});
+					});
+					
+					document.querySelectorAll('table').forEach(table => {
+						table.querySelectorAll('th').forEach(header => {
+							header.addEventListener('click', () => {
+								const tbody = table.querySelector('tbody');
+								const rows = Array.from(tbody.querySelectorAll('tr'));
+								const index = Array.from(header.parentElement.children).indexOf(header);
+								const isAscending = header.classList.contains('ascending');
+								
+								table.querySelectorAll('th').forEach(th => th.classList.remove('ascending', 'descending'));
+								
+								header.classList.toggle('ascending', !isAscending);
+								header.classList.toggle('descending', isAscending);
+								
+								const sortType = header.dataset.sort || 'string';
+								
+								const sortedRows = rows.sort((rowA, rowB) => {
+									const cellA = rowA.children[index].innerText.trim();
+									const cellB = rowB.children[index].innerText.trim();
+									
+									if (sortType === 'number') {
+										return isAscending ? cellB - cellA : cellA - cellB;
+									} else {
+										return isAscending
+										? cellB.localeCompare(cellA, undefined, { numeric: true })
+										: cellA.localeCompare(cellB, undefined, { numeric: true });
+									}
+								});
+								
+								sortedRows.forEach(row => tbody.appendChild(row));
+							});
+						});
+					});
+
+					
+
+
+					document.getElementById('kill-pid-button').addEventListener('click', () => {
+						const pidInput = document.getElementById('pid-input').value.trim();
+						const outcomeLabel = document.getElementById('kill-pid-outcome');
+
+						if (pidInput === '' || isNaN(pidInput) || parseInt(pidInput, 10) <= 0) {
+							outcomeLabel.textContent = 'Invalid PID. Please enter a valid positive integer.';
+							outcomeLabel.style.color = '#e53935';
+							return;
+						}
+
+						const pid = parseInt(pidInput, 10);
+						ws.send(`kill_process-${pid}`);
+
+						document.getElementById('pid-input').value = '';
+						outcomeLabel.textContent = 'Killing process...';
+						outcomeLabel.style.color = '#1e88e5';
+					});
+
+
+					document.addEventListener("DOMContentLoaded", function () {
+				const toggleCheckbox = document.getElementById("dark-mode-checkbox");
+				const isDarkMode = localStorage.getItem("darkMode") === "true";
+
+				// Apply saved preference
+				if (isDarkMode) {
+					document.body.classList.add("dark-mode");
+					toggleCheckbox.checked = true;
+				}
+
+				// Toggle dark mode
+				toggleCheckbox.addEventListener("change", function () {
+					if (this.checked) {
+						document.body.classList.add("dark-mode");
+						localStorage.setItem("darkMode", "true");
+					} else {
+						document.body.classList.remove("dark-mode");
+						localStorage.setItem("darkMode", "false");
+					}
 				});
 			});
-			
-			
-			
-			
-			document.getElementById('kill-pid-button').addEventListener('click', () => {
-				const pidInput = document.getElementById('pid-input').value.trim();
-				const outcomeLabel = document.getElementById('kill-pid-outcome');
-				
-				if (pidInput === '' || isNaN(pidInput) || parseInt(pidInput, 10) <= 0) {
-					outcomeLabel.textContent = 'Invalid PID. Please enter a valid positive integer.';
-					outcomeLabel.style.color = '#e53935';
-					return;
-				}
-				
-				const pid = parseInt(pidInput, 10);
-				ws.send(`kill_process-${pid}`);
-				
-				document.getElementById('pid-input').value = '';
-				outcomeLabel.textContent = 'Killing process...';
-				outcomeLabel.style.color = '#1e88e5';
-			});
-			
-			
+
 		</script>
 	</body>
-	</html>
+</html>
