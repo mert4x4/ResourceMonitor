@@ -34,40 +34,10 @@ async def hello(request):
         path = pathlib.Path(__file__).parent.joinpath("hello.html")
         return web.FileResponse(path)
 
-    # Handles the user credentials when the form gets submitted
-    if request.method == "POST":
-        data = await request.post()
-        username = data.get("username")
-        password = data.get("password")
-
-        if username != USERNAME:
-            # Redirect to login with an invalid username error
-            raise web.HTTPFound(f"{BASE_URL}/hello?username_error=Invalid+username")
-        elif hashlib.sha256(password.encode()).hexdigest() != PASSWORD_HASH:
-            # Redirect to login with an invalid password error
-            raise web.HTTPFound(f"{BASE_URL}/hello?password_error=Invalid+password")
-        else:
-            # Redirect to monitoring page if the login is successful
-            raise web.HTTPFound(f"{BASE_URL}/monitor?username={username}&password={password}")
-
-
 async def monitor(request):
     """Serve the monitoring page"""
-
-    username = request.query.get("username")
-    password = request.query.get("password")
-
-    # Validate the credentials
-    if username != USERNAME or hashlib.sha256(password.encode()).hexdigest() != PASSWORD_HASH:
-        # Redirect to login page if authentication fails
-        raise web.HTTPFound(f"{BASE_URL}/hello?username_error=Access+denied.+Please+log+in.")
-
-    # Serve the monitoring page if authentication is successful
     path = pathlib.Path(__file__).parent.joinpath("monitor.html")
     return web.FileResponse(path)
-
-
-
 
 async def get_logged_in_users():
     """Returns the current logged-in user list"""
@@ -424,10 +394,6 @@ def run():
             allow_headers="*",
         )
     })
-
-    # Apply CORS to each route
-    for route in list(app.router.routes()):
-        cors.add(route)
 
     # Run the app
     web.run_app(app, port=8765, ssl_context=ssl_context)
