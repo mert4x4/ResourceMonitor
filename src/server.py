@@ -11,6 +11,12 @@ import requests
 import os
 import hashlib
 from aiohttp_session import get_session
+import aiohttp_cors
+
+
+
+if os.path.exists("/host_proc"):
+    psutil.PROCFS_PATH = "/host_proc"
 
 
 # Username and hashed password for authentication
@@ -386,10 +392,11 @@ def create_ssl_context():
 
 
 def run():
-    """Start WebSocket server."""
+    """Start WebSocket server with CORS enabled."""
     ssl_context = create_ssl_context()
     app = web.Application()
 
+    # Add routes
     app.add_routes(
         [
             web.get("/ws", send_stats),
@@ -398,7 +405,23 @@ def run():
             web.post("/hello", hello),
         ]
     )
+
+    # Enable CORS for all routes
+    cors = aiohttp_cors.setup(app, defaults={
+        "*": aiohttp_cors.ResourceOptions(
+            allow_credentials=True,
+            expose_headers="*",
+            allow_headers="*",
+        )
+    })
+
+    # Apply CORS to each route
+    for route in list(app.router.routes()):
+        cors.add(route)
+
+    # Run the app
     web.run_app(app, port=8765, ssl_context=ssl_context)
+
 
 
 if __name__ == "__main__":

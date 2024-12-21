@@ -4,3 +4,4 @@ websockets
 psutil
 requests
 aiohttp-session
+aiohttp_cors
