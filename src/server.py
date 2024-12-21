@@ -172,9 +172,9 @@ async def get_top_processes():
             continue
 
     top_cpu_processes_ = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)
-    top_cpu_processes = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)[:800]
-    print("asdasdas: " + str(len(top_cpu_processes_)))
-    return top_cpu_processes
+    #top_cpu_processes = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)[:800]
+    #print("asdasdas: " + str(len(top_cpu_processes_)))
+    return top_cpu_processes_
 
 
 async def hello(request):
