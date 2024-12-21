@@ -19,7 +19,7 @@ ENV USERNAME=admin
 ENV PASSWORD_HASH=f307d19df6386be176ac13771b02c89ce71c2cb551ead8a6069931c6a9cb1215
 
 # Expose the application port
-EXPOSE 8765
+EXPOSE 1017
 
 # Run the application
 CMD ["python", "/app/src/server.py"]
