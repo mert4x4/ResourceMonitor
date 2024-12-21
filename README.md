@@ -55,18 +55,7 @@ This project is a **real-time server monitoring web application** designed as pa
 - **Docker** and **Docker Compose** must be installed.
 - Basic understanding of running Docker containers.
 
-### Environment Variables
-The application requires the following environment variables to be set in the `Dockerfile` or passed during runtime:
-- `USERNAME`: The username for the login page.
-- `PASSWORD_HASH`: The SHA256-hashed password for authentication.
-
-Example for setting environment variables in the Dockerfile:
-```dockerfile
-ENV USERNAME=admin
-ENV PASSWORD_HASH=f307d19df6386be176ac13771b02c89ce71c2cb551ead8a6069931c6a9cb1215
-```
-
-### Build and Run the Application Locally
+### Build and Run the Application
 1. Clone the repository:
    ```bash
    git clone <repository-url>
@@ -76,15 +65,9 @@ ENV PASSWORD_HASH=f307d19df6386be176ac13771b02c89ce71c2cb551ead8a6069931c6a9cb12
 2. Build the Docker image:
    ```bash
    docker build -t server-monitor .
+   docker build -t image_mert .
    ```
 
-3. Run the container locally:
-   ```bash
-   docker run -d -p 8765:8765 server-monitor
-   ```
-
-4. Access the application locally:
-   - Open your browser and navigate to `https://localhost:8765/monitor`.
 
 ### Deploy on Class Server
 1. Check your Linux user ID by running the following command:
@@ -97,24 +80,24 @@ ENV PASSWORD_HASH=f307d19df6386be176ac13771b02c89ce71c2cb551ead8a6069931c6a9cb12
    ```bash
    docker build -t server-monitor .
    docker run -p 1001:8765 server-monitor
+
+      docker run -d   --name mert   -p 1017:8765   --pid=host   -v /var/run/utmp:/var/run/utmp:ro   -v /var/log/wtmp:/var/log/wtmp:ro   -v /var/log/syslog:/var/log/syslog:ro   -v /proc:/host_proc:ro   --restart=always   image_mert
    ```
 
+
 3. Access the application on the class server:
-   - Open your browser and navigate to `https://cs395.org/1001/monitor`.
+   - Open your browser and navigate to `https://cs395.org/1017/monitor`.
 
 4. WebSocket endpoint:
-   - WebSocket communication occurs at `https://cs395.org/1001/ws`.
+   - WebSocket communication occurs at `https://cs395.org/1017/ws`.
 
 ---
 
 ## Application Features in Detail
 
-### Login Page
-- URL: `/hello`
-- Users enter their username and password.
-- Displays an error message if credentials are incorrect.
 
 ### Monitoring Dashboard
+After the user inputs the password and submits it, the webpage monitors the statistics.
 - URL: `/monitor`
 - Displays:
   - **System Resources:** CPU, memory, and disk usage.
@@ -158,7 +141,7 @@ ENV PASSWORD_HASH=f307d19df6386be176ac13771b02c89ce71c2cb551ead8a6069931c6a9cb12
 3. **File Structure:**
    - **`app/cert`**: Contains SSL certificates for HTTPS.
    - **`src`**: Contains the server Python script.
-   - **`hello.html`** and **`monitor.html`**: Frontend files served by the application.
+   - **`monitor.html`**: Frontend files served by the application.
 
 4. **Build Configuration:**
    - Dockerfile optimizations, including using a lightweight Python image and caching dependencies.

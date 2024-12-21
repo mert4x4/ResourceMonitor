@@ -4,7 +4,7 @@ services:
   monitor:
     build: .  # Build the container using the Dockerfile in the current directory
     ports:
-      - "1017:8765"  # Map container's port 8765 to the host's port 8765
+      - "1017:8765"  # Map container's port 8765 to the host's port 1017
     pid: host  # Share the host's process namespace to monitor host processes
     volumes:
       - /var/run/utmp:/var/run/utmp:ro      # Mount host's logged-in users data
