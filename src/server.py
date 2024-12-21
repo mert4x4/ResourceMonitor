@@ -26,38 +26,52 @@ PASSWORD_HASH = os.getenv("PASSWORD_HASH", hashlib.sha256("mydarling".encode()).
 async def hello(request):
     """Serves the login page and validates the user credentials"""
 
-    # Serves the log-in page when the GET request is received
+    # Dynamically construct the base URL with user ID
+    user_id = os.getenv("USER_ID", "default_id")  # Get user ID from environment
+    base_url = f"https://cs395.org/{user_id}"
+
+    # Serve the login page when the GET request is received
     if request.method == "GET":
         path = pathlib.Path(__file__).parent.joinpath("hello.html")
         return web.FileResponse(path)
 
-    # Handles the user credentials when the form gets submited
+    # Handles the user credentials when the form gets submitted
     if request.method == "POST":
         data = await request.post()
         username = data.get("username")
         password = data.get("password")
 
         if username != USERNAME:
-            raise web.HTTPFound(f"/hello?username_error=Invalid+username")
+            # Redirect to login with an invalid username error
+            raise web.HTTPFound(f"{base_url}/hello?username_error=Invalid+username")
         elif hashlib.sha256(password.encode()).hexdigest() != PASSWORD_HASH:
-            raise web.HTTPFound(f"/hello?password_error=Invalid+password")
+            # Redirect to login with an invalid password error
+            raise web.HTTPFound(f"{base_url}/hello?password_error=Invalid+password")
         else:
-            # Redicerts to monitoring page if the log-in is succesfull
-            raise web.HTTPFound(f"/monitor?username={username}&password={password}")
+            # Redirect to monitoring page if the login is successful
+            raise web.HTTPFound(f"{base_url}/monitor?username={username}&password={password}")
+
 
 
 async def monitor(request):
+    """Serve the monitoring page"""
+
+    # Dynamically construct the base URL with user ID
+    user_id = os.getenv("USER_ID", "default_id")  # Get user ID from environment
+    base_url = f"https://cs395.org/{user_id}"
+
     username = request.query.get("username")
     password = request.query.get("password")
 
-    # Validates the credentials in the query
+    # Validate the credentials
     if username != USERNAME or hashlib.sha256(password.encode()).hexdigest() != PASSWORD_HASH:
-        # Redirect to log-in page if the authentication fails
-        raise web.HTTPFound("/hello?username_error=Access+denied.+Please+log+in.")
+        # Redirect to login page if authentication fails
+        raise web.HTTPFound(f"{base_url}/hello?username_error=Access+denied.+Please+log+in.")
 
-    # Serve the monitoring page if the authentication is succesfull
+    # Serve the monitoring page if authentication is successful
     path = pathlib.Path(__file__).parent.joinpath("monitor.html")
     return web.FileResponse(path)
+
 
 async def get_logged_in_users():
     """Returns the current logged-in user list"""

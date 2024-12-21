@@ -1,16 +1,18 @@
 version: "3.8"
+
 services:
   monitor:
-    build: .
+    build: .  # Build the container using the Dockerfile in the current directory
     ports:
-      - "8765:8765"  # Map container's port 8765 to host's port 8765
-    pid: host        # Share the host's process namespace
+      - "8765:8765"  # Map container's port 8765 to the host's port 8765
+    pid: host  # Share the host's process namespace to monitor host processes
     volumes:
-      - /var/run/utmp:/var/run/utmp:ro    # Host's logged-in users data
-      - /var/log/wtmp:/var/log/wtmp:ro    # Host's last users data
-      - /var/log/syslog:/var/log/syslog:ro  # Host's system logs
-      - /proc:/host_proc:ro              # Host's /proc for system statistics
-    restart: always  # Restart the container automatically in case of failure
+      - /var/run/utmp:/var/run/utmp:ro      # Mount host's logged-in users data
+      - /var/log/wtmp:/var/log/wtmp:ro      # Mount host's last users data
+      - /var/log/syslog:/var/log/syslog:ro  # Mount host's system logs
+      - /proc:/host_proc:ro                # Mount host's /proc for system statistics
+    restart: always  # Automatically restart the container in case of failure
     environment:
-      - USERNAME=admin                  # Set the username environment variable
-      - PASSWORD_HASH=f307d19df6386be176ac13771b02c89ce71c2cb551ead8a6069931c6a9cb1215  # Password hash
+      - USERNAME=admin                    # Set the username environment variable
+      - PASSWORD_HASH=f307d19df6386be176ac13771b02c89ce71c2cb551ead8a6069931c6a9cb1215  # Set the hashed password
+      - USER_ID=1001                      # Set the user ID dynamically for redirection
