@@ -9,6 +9,8 @@ from datetime import timedelta
 import socket
 import requests
 import os
+import hashlib
+from aiohttp_session import get_session
 
 async def get_logged_in_users():
     users = []
@@ -171,21 +173,47 @@ async def get_top_processes():
         except psutil.AccessDenied:
             continue
 
-    #top_cpu_processes_ = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)
-    #top_cpu_processes = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)[:800]
-    #print("asdasdas: " + str(len(top_cpu_processes_)))
-    return processes
+    top_cpu_processes_ = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)
+    top_cpu_processes = sorted(processes, key=lambda x: x['cpu_percent'], reverse=True)[:800]
+    print("asdasdas: " + str(len(top_cpu_processes_)))
+    return top_cpu_processes
 
+
+USERNAME = os.getenv("USERNAME", "admin")
+PASSWORD_HASH = os.getenv("PASSWORD_HASH", hashlib.sha256("mydarling".encode()).hexdigest())
 
 async def hello(request):
-    text = "Hello"
-    return web.Response(text=text)
+    if request.method == "GET":
+        path = pathlib.Path(__file__).parent.joinpath("hello.html")
+        return web.FileResponse(path)
+
+    if request.method == "POST":
+        data = await request.post()
+        username = data.get("username")
+        password = data.get("password")
+
+        # Validate credentials
+        if username != USERNAME:
+            raise web.HTTPFound(f"/hello?username_error=Invalid+username")
+        elif hashlib.sha256(password.encode()).hexdigest() != PASSWORD_HASH:
+            raise web.HTTPFound(f"/hello?password_error=Invalid+password")
+        else:
+            # Redirect to /monitor with credentials in the query
+            raise web.HTTPFound(f"/monitor?username={username}&password={password}")
 
 
 async def monitor(request):
-    path = pathlib.Path(__file__).parents[0].joinpath("monitor.html")
-    print(f"Serving {path}")
+    username = request.query.get("username")
+    password = request.query.get("password")
+
+    # Validate credentials
+    if username != USERNAME or hashlib.sha256(password.encode()).hexdigest() != PASSWORD_HASH:
+        raise web.HTTPFound("/hello?username_error=Access+denied.+Please+log+in.")
+
+    # Serve the monitor page if credentials are correct
+    path = pathlib.Path(__file__).parent.joinpath("monitor.html")
     return web.FileResponse(path)
+
 
 
 async def get_system_stats():
@@ -333,11 +361,13 @@ def run():
     """Start WebSocket server."""
     ssl_context = create_ssl_context()
     app = web.Application()
+      # Add routes
     app.add_routes(
         [
             web.get("/ws", send_stats),
             web.get("/monitor", monitor),
             web.get("/hello", hello),
+            web.post("/hello", hello),
         ]
     )
     web.run_app(app, port=8765, ssl_context=ssl_context)
