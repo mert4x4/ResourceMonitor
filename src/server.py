@@ -14,15 +14,6 @@ from aiohttp_session import get_session
 import aiohttp_cors
 
 
-
-#if os.path.exists("/host_proc"):
-#    psutil.PROCFS_PATH = "/host_proc"
-
-
-# Username and hashed password for authentication
-USERNAME = os.getenv("USERNAME", "admin")
-PASSWORD_HASH = os.getenv("PASSWORD_HASH", hashlib.sha256("mydarling".encode()).hexdigest())
-
 # Hardcoded base URL
 BASE_URL = "https://cs395.org/1017"
 

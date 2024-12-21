@@ -12,7 +12,4 @@ services:
       - /var/log/syslog:/var/log/syslog:ro  # Mount host's system logs
       - /proc:/host_proc:ro                # Mount host's /proc for system statistics
     restart: always  # Automatically restart the container in case of failure
-    environment:
-      - USERNAME=admin                    # Set the username environment variable
-      - PASSWORD_HASH=f307d19df6386be176ac13771b02c89ce71c2cb551ead8a6069931c6a9cb1215  # Set the hashed password
-      - USER_ID=1017                      # Set the user ID dynamically for redirection
+
