@@ -296,6 +296,9 @@ async def kill_process(pid):
     except Exception as e:
         return {"status": "error", "message": f"Error terminating process {pid}: {e}"}
 
+# Define the password for authentication
+PASSWORD = "mydarling"
+
 async def send_stats(request):
     """Handles the web socket requests"""
 
@@ -303,53 +306,70 @@ async def send_stats(request):
     ws = web.WebSocketResponse()
     await ws.prepare(request)
 
+    is_authenticated = False  # Track if the client is authenticated
+
     try:
         async for msg in ws:
             if msg.type == web.WSMsgType.text:
-                #print("message:" + msg.data);
-                if msg.data.startswith("logs-"):
-                    try:
-                        lines = int(msg.data.split("-")[1])
-                    except (IndexError, ValueError):
-                        lines = 50 
-                    data = await get_system_logs(lines=lines)
-                    response = ["logs", data]
-                elif msg.data.startswith("last_users-"):
-                    try:
-                        count = int(msg.data.split("-")[1])
-                    except (IndexError, ValueError):
-                        count = 10
-                    data = await get_last_user_logs(count=count)
-                    response = ["last_users", data]
-                elif msg.data == "stats":
-                    data = await get_system_stats()
-                    response = ["stats", data]
-                elif msg.data == "top_processes":
-                    data = await get_top_processes()
-                    response = ["top_processes", data]
-                elif msg.data == "system_overview":
-                    data = await get_system_overview()
-                    response = ["system_overview", data]
-                elif msg.data == "ports":
-                    data = await get_process_ports()
-                    response = ["port_data", data]
-                elif msg.data == "ip_addresses":
-                    data = await get_ip_addresses()
-                    response = ["ip_addresses", data]
-                elif msg.data == "users":
-                    data = await get_logged_in_users()
-                    response = ["users", data]
-                elif msg.data.startswith("kill_process-"):
-                    try:
-                        pid = int(msg.data.split("-")[1])
-                        data = await kill_process(pid)
-                        response = ["kill_process",data]
-                    except (IndexError, ValueError):
-                        response = ["kill_process",{"status": "error", "message": "Error: Invalid PID format."}]
-                    await ws.send_str(json.dumps(response, default=str))
+                # Handle incoming text messages
+                if not is_authenticated:
+                    # Check for password authentication
+                    if msg.data.startswith("password-"):
+                        user_password = msg.data.split("-", 1)[1]
+                        if user_password == PASSWORD:
+                            is_authenticated = True
+                            response = {"type": "auth", "status": "success"}
+                        else:
+                            response = {"type": "auth", "status": "failure"}
+                        await ws.send_json(response)
+                    else:
+                        # Reject any requests before authentication
+                        await ws.send_json({"type": "error", "message": "Authentication required."})
                 else:
-                    response = ["error", "Invalid request"]
-                await ws.send_str(json.dumps(response, default=str))
+                    # Handle requests after authentication
+                    if msg.data.startswith("logs-"):
+                        try:
+                            lines = int(msg.data.split("-")[1])
+                        except (IndexError, ValueError):
+                            lines = 50 
+                        data = await get_system_logs(lines=lines)
+                        response = ["logs", data]
+                    elif msg.data.startswith("last_users-"):
+                        try:
+                            count = int(msg.data.split("-")[1])
+                        except (IndexError, ValueError):
+                            count = 10
+                        data = await get_last_user_logs(count=count)
+                        response = ["last_users", data]
+                    elif msg.data == "stats":
+                        data = await get_system_stats()
+                        response = ["stats", data]
+                    elif msg.data == "top_processes":
+                        data = await get_top_processes()
+                        response = ["top_processes", data]
+                    elif msg.data == "system_overview":
+                        data = await get_system_overview()
+                        response = ["system_overview", data]
+                    elif msg.data == "ports":
+                        data = await get_process_ports()
+                        response = ["port_data", data]
+                    elif msg.data == "ip_addresses":
+                        data = await get_ip_addresses()
+                        response = ["ip_addresses", data]
+                    elif msg.data == "users":
+                        data = await get_logged_in_users()
+                        response = ["users", data]
+                    elif msg.data.startswith("kill_process-"):
+                        try:
+                            pid = int(msg.data.split("-")[1])
+                            data = await kill_process(pid)
+                            response = ["kill_process", data]
+                        except (IndexError, ValueError):
+                            response = ["kill_process", {"status": "error", "message": "Error: Invalid PID format."}]
+                        await ws.send_str(json.dumps(response, default=str))
+                    else:
+                        response = ["error", "Invalid request"]
+                    await ws.send_str(json.dumps(response, default=str))
             elif msg.type == web.WSMsgType.binary:
                 continue
             elif msg.type == web.WSMsgType.close:
@@ -360,6 +380,7 @@ async def send_stats(request):
     finally:
         print("Connection closed")
     return ws
+
 
 
 def create_ssl_context():

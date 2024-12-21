@@ -4,6 +4,13 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Server Monitor</title>
+	<div id="login-form">
+		<h1>Enter Password</h1>
+		<form>
+		  <input type="password" id="password" placeholder="Enter Password" required>
+		  <button type="submit">Submit</button>
+		</form>
+	  </div>
 	<style>
 		body {
 			font-family: 'Roboto', sans-serif;
@@ -926,6 +933,14 @@
 				}
 			});
 		});
+
+		// Send password for authentication
+		document.getElementById("login-form").addEventListener("submit", (e) => {
+		e.preventDefault();
+		const password = document.getElementById("password").value;
+		ws.send(`password-${password}`);
+		});
+
 		
 	</script>
 </body>
