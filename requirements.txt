@@ -3,3 +3,4 @@ aiohttp
 websockets
 psutil
 requests
+aiohttp-session
