@@ -237,65 +237,154 @@ input:checked + .slider:before {
     transform: translateX(26px);
 }
 
-/* General Dark Mode Adjustments */
+/* Dark Mode General Adjustments */
+/* Dark Mode Styling */
 body.dark-mode {
-    background: linear-gradient(to bottom, #101010, #181818, #202020);
-    color: #e0e0e0;
+    background: linear-gradient(to bottom, #121212, #1a1a1a, #1f1f1f); /* Uniform dark gradient */
+    color: #cfcfcf; /* Soft gray text for readability */
 }
 
 .dark-mode h1 {
-    color: #4caf50;
+    color: #76b7b2; /* Muted teal for the title */
 }
 
+/* Cards */
 .dark-mode .card {
-    background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
-    color: #e0e0e0;
-    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.05);
+    background: linear-gradient(145deg, #1a1a1a, #242424); /* Darker card background */
+    color: #c9c9c9; /* Light gray for card text */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Subtle shadow */
+    border-radius: 12px; /* Slightly rounded corners */
+    padding: 20px;
 }
 
+.dark-mode .card strong {
+    color: #7ec8c4; /* Muted teal for headers */
+}
+
+/* Table Styling */
 .dark-mode table {
-    background-color: #1c1c1c;
-    color: #e0e0e0;
-    border: 1px solid #444;
+    background-color: #1c1c1c; /* Dark muted table background */
+    border: 1px solid #444; /* Subtle border */
+    border-radius: 8px;
+    width: 100%;
 }
 
 .dark-mode th {
-    background-color: #333333;
-    color: #bdbdbd;
-}
-
-.dark-mode tr:nth-child(even) {
-    background-color: #262626;
-}
-
-.dark-mode tr:hover {
-    background-color: #333333;
-}
-
-.dark-mode .tabs nav button {
-    color: #bdbdbd;
-}
-
-.dark-mode .tabs nav button.active {
-    color: #4caf50;
-    border-bottom: 3px solid #4caf50;
-}
-
-.dark-mode .ring::before {
-    background: conic-gradient(#4caf50 calc(var(--percentage, 0) * 1%), #202020 calc(var(--percentage, 0) * 1%));
-}
-
-.dark-mode .ring-label {
-    color: #bdbdbd;
+    background-color: #292929; /* Darker header background */
+    color: #76b7b2; /* Muted teal for table headers */
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 12px;
+    border-bottom: 2px solid #444;
 }
 
 .dark-mode td {
-    color: #d3d3d3;
+    background-color: #1e1e1e; /* Consistent row background */
+    color: #c9c9c9; /* Soft gray for text */
+    padding: 10px;
+    border: 1px solid #292929; /* Subtle border for separation */
 }
 
-.dark-mode th {
-    font-weight: bold;
+.dark-mode tr:nth-child(even) {
+    background-color: #242424; /* Slightly lighter alternate rows */
 }
+
+.dark-mode tr:hover {
+    background-color: #2e2e2e; /* Highlighted row on hover */
+}
+
+/* Log Output Styling */
+.dark-mode .log-container pre {
+    background: #1a1a1a; /* Consistent with card background */
+    color: #c9c9c9; /* Soft gray text */
+    border: 1px solid #444; /* Border for clarity */
+    padding: 12px;
+    border-radius: 8px;
+    overflow-y: auto;
+    max-height: 400px; /* Limit height */
+    font-size: 0.9rem; /* Slightly smaller font for logs */
+    line-height: 1.4;
+}
+
+/* Tabs */
+.dark-mode .tabs {
+    background: linear-gradient(145deg, #1a1a1a, #232323); /* Dark gradient for tabs container */
+    border-radius: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Subtle shadow */
+    padding: 20px;
+}
+
+.dark-mode .tabs nav button {
+    color: #a9a9a9; /* Muted gray for inactive tabs */
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.3s, border-bottom 0.3s;
+    border-bottom: 3px solid transparent;
+}
+
+.dark-mode .tabs nav button.active {
+    color: #76b7b2; /* Muted teal for active tab text */
+    border-bottom: 3px solid #76b7b2; /* Subtle underline for active tab */
+}
+
+.dark-mode .tab-content {
+    background: #1e1e1e; /* Match content background with card background */
+    padding: 20px;
+    border-radius: 12px;
+    color: #c9c9c9; /* Subtle light gray for content text */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add shadow to content container */
+}
+
+/* Input Fields */
+.dark-mode input[type="number"],
+.dark-mode input[type="text"] {
+    background-color: #1e1e1e; /* Dark input background */
+    color: #cfcfcf; /* Light gray text */
+    border: 1px solid #444; /* Subtle border */
+    padding: 8px;
+    border-radius: 4px;
+    outline: none;
+    font-size: 1rem;
+    transition: border 0.3s;
+}
+
+.dark-mode input[type="number"]:focus,
+.dark-mode input[type="text"]:focus {
+    border: 1px solid #76b7b2; /* Muted teal border on focus */
+}
+
+/* Buttons */
+.dark-mode button {
+    background-color: #2a2a2a; /* Match with dark theme */
+    color: #76b7b2; /* Muted teal for text */
+    border: 1px solid #444; /* Subtle border */
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s, border 0.3s;
+}
+
+.dark-mode button:hover {
+    background-color: #333333; /* Slightly lighter on hover */
+    border-color: #76b7b2; /* Teal border on hover */
+}
+
+/* Rings */
+.dark-mode .ring::before {
+    background: conic-gradient(#76b7b2 calc(var(--percentage, 0) * 1%), #1e1e1e calc(var(--percentage, 0) * 1%));
+}
+
+.dark-mode .ring-label {
+    color: #cfcfcf; /* Consistent with text color */
+}
+
+
+
+
+
 	</style>    
 </head>
 <body>
@@ -501,27 +590,44 @@ body.dark-mode {
 				document.getElementById('disk-usage').innerText = `${diskUsage}% (${(message[1].disk.used / 1e9).toFixed(2)} GB / ${(message[1].disk.total / 1e9).toFixed(2)} GB)`;
 				updateRing("disk-ring", diskUsage);
 			} else if (messageType === 'top_processes') {
-				// Populate the Top Processes Table
 				const processStatsDiv = document.getElementById('process-stats');
-				processStatsDiv.innerHTML = '';
-				message[1].forEach(proc => {
-					const row = `<tr>
-						<td>${proc.pid}</td>
-						<td>${proc.username}</td>
-						<td>${proc.name}</td>
-						<td>${proc.priority}</td>
-						<td>${proc.nice}</td>
-						<td>${proc.virt_memory_mb.toFixed(2)}</td>
-						<td>${proc.memory_mb.toFixed(2)}</td>
-						<td>${proc.shr_memory_mb.toFixed(2)}</td>
-						<td>${proc.status}</td>
-						<td>${proc.cpu_percent.toFixed(1)}</td>
-						<td>${proc.memory_percent.toFixed(1)}</td>
-						<td>${proc.uptime}</td>
-						<td>${proc.command}</td>
-					</tr>`;
-						processStatsDiv.innerHTML += row;
-					});
+				const processes = message[1]; // All incoming process data
+				processStatsDiv.innerHTML = ''; // Clear existing rows
+
+				const chunkSize = 50; // Render 50 rows at a time
+				let index = 0;
+
+				function renderChunk() {
+					const fragment = document.createDocumentFragment();
+					for (let i = 0; i < chunkSize && index < processes.length; i++, index++) {
+						const proc = processes[index];
+						const row = document.createElement('tr');
+						row.innerHTML = `
+							<td>${proc.pid}</td>
+							<td>${proc.username}</td>
+							<td>${proc.name}</td>
+							<td>${proc.priority}</td>
+							<td>${proc.nice}</td>
+							<td>${proc.virt_memory_mb.toFixed(2)}</td>
+							<td>${proc.memory_mb.toFixed(2)}</td>
+							<td>${proc.shr_memory_mb.toFixed(2)}</td>
+							<td>${proc.status}</td>
+							<td>${proc.cpu_percent.toFixed(1)}</td>
+							<td>${proc.memory_percent.toFixed(1)}</td>
+							<td>${proc.uptime}</td>
+							<td>${proc.command}</td>
+						`;
+						fragment.appendChild(row);
+					}
+
+					processStatsDiv.appendChild(fragment);
+
+					if (index < processes.length) {
+						requestAnimationFrame(renderChunk);
+					}
+				}
+
+				renderChunk(); // Start rendering the first chunk
 				} else if (messageType === 'system_overview') {
 					document.getElementById('tasks').innerText = message[1].tasks;
 					document.getElementById('threads').innerText = message[1].threads;
@@ -646,7 +752,7 @@ body.dark-mode {
 					setInterval(() => ws.send('top_processes'), 4000);
 					setInterval(() => ws.send('system_overview'), 4000);
 					setInterval(() => ws.send('ports'), 4000);
-					setInterval(() => ws.send('ip_addresses'), 10000);
+					setInterval(() => ws.send('ip_addresses'), 4000);
 					setInterval(() => ws.send('users'), 5000);
 					setInterval(() => {
 						const logLines = document.getElementById('log-lines').value;
