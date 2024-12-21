@@ -553,6 +553,8 @@
 </div>
 
 <script>
+	
+	// Create the socket connection to the server
 	const server_url = 'wss://' + location.host + location.pathname.replace('monitor', 'ws');
 	const ws = new WebSocket(server_url);
 	
@@ -562,6 +564,9 @@
 		document.getElementById('error').innerText = `Error: ${e.message}`;
 	};
 	
+	
+	
+	// Update the ring percentages
 	const updateRing = (id, percentage) => {
 		const ring = document.getElementById(id);
 		const text = document.getElementById(`${id}-text`);
@@ -569,17 +574,22 @@
 		text.textContent = `${percentage}%`;
 	};
 	
+	// Track the states of the columns for sorting
 	const sortState = {
 		"process-stats": { column: null, ascending: true },
 		"port-data-rows": { column: null, ascending: true },
 	};
 	
 	
+	
+	// Handle incoming socket messages
 	ws.onmessage = (event) => {
 		const message = JSON.parse(event.data);
 		const messageType = message[0];
 		
 		if (messageType === 'stats') {
+			// Update the cpu usage, memory usage and disk usage and update the rings
+			
 			const cpuUsage = message[1].cpu.toFixed(2);
 			document.getElementById('cpu-usage').innerText = `${cpuUsage}`;
 			updateRing("cpu-ring", cpuUsage);
@@ -594,6 +604,8 @@
 			document.getElementById('disk-usage').innerText = `${diskUsage}% (${(message[1].disk.used / 1e9).toFixed(2)} GB / ${(message[1].disk.total / 1e9).toFixed(2)} GB)`;
 			updateRing("disk-ring", diskUsage);
 		} else if (messageType === 'top_processes') {
+			// When the top processes data incomes update the table and sort the contents for dynamic sorting
+			
 			const processStatsDiv = document.getElementById('process-stats');
 			const processes = message[1];
 			const tableId = processStatsDiv.id;
@@ -620,6 +632,8 @@
 				processStatsDiv.appendChild(row);
 			});
 			
+			
+			// Sorts the data
 			const sortConfig = sortState[tableId];
 			if (sortConfig && sortConfig.column !== null) {
 				const rows = Array.from(processStatsDiv.querySelectorAll('tr'));
@@ -642,7 +656,10 @@
 				
 				sortedRows.forEach(row => processStatsDiv.appendChild(row));
 			}
-		} else if (messageType === 'system_overview') {
+		} 
+		else if (messageType === 'system_overview') {
+			// Gets the system overview stats, updates the battery percentage ring
+			
 			document.getElementById('tasks').innerText = message[1].tasks;
 			document.getElementById('threads').innerText = message[1].threads;
 			document.getElementById('running').innerText = message[1].running;
@@ -660,6 +677,7 @@
 			updateRing("battery-ring", battery);
 			
 		} else if (messageType === 'port_data') {
+			// When the top port data incomes update the table and sort the contents for dynamic sorting
 			const portDataDiv = document.getElementById('port-data-rows');
 			const ports = message[1];
 			const tableId = portDataDiv.id;
@@ -669,16 +687,17 @@
 			ports.forEach(port => {
 				const row = document.createElement('tr');
 				row.innerHTML = `
-            <td>${port.pid}</td>
-            <td>${port.name}</td>
-            <td>${port.local_address}</td>
-            <td>${port.remote_address}</td>
-            <td>${port.status}</td>
-            <td>${port.protocol}</td>
-        `;
+				<td>${port.pid}</td>
+				<td>${port.name}</td>
+				<td>${port.local_address}</td>
+				<td>${port.remote_address}</td>
+				<td>${port.status}</td>
+				<td>${port.protocol}</td>
+			`;
 				portDataDiv.appendChild(row);
 			});
 			
+			// Sorts the data
 			const sortConfig = sortState[tableId];
 			if (sortConfig && sortConfig.column !== null) {
 				const rows = Array.from(portDataDiv.querySelectorAll('tr'));
@@ -701,15 +720,16 @@
 				
 				sortedRows.forEach(row => portDataDiv.appendChild(row));
 			}
-			
 		}
-		
 		else if (messageType === "last_users") {
+			// Get the last user output and print it in the textbox
 			const logs = message[1];
 			const userLogsOutput = document.getElementById("user-logs-output");
 			userLogsOutput.textContent = logs.join("\n");
 		}		
 		else if (messageType === 'ip_addresses') {
+			// Get the network interface information
+			
 			const localIpList = document.getElementById('local-ip-list');
 			const externalIp = document.getElementById('external-ip');
 			
@@ -724,6 +744,7 @@
 			externalIp.textContent = message[1].external_ip || 'Error retrieving external IP';
 		}
 		else if (messageType === 'users') {
+			// Get the current logged-in user data and show as a table
 			const userDataDiv = document.getElementById('user-data');
 			userDataDiv.innerHTML = '';
 			message[1].forEach(user => {
@@ -737,10 +758,14 @@
 				});
 			}
 			else if (messageType === 'logs') {
+				// Get the system logs and print in the textbox
+				
 				const logsOutput = document.getElementById('system-logs-output');
 				logsOutput.textContent = message[1].join('\n');
 			}
 			if (message[0] === 'kill_process') {
+				// Get the information of if the killing process is succesfull or not
+				
 				const outcomeLabel = document.getElementById('kill-pid-outcome');
 				const response = message[1];
 				//console.log("qweqweqweqweqweqweqw");
@@ -757,8 +782,10 @@
 			}						
 		};
 		
+		
 		const logSlider = document.getElementById('log-lines');
 		const logLinesValue = document.getElementById('log-lines-value');
+		
 		const logsOutput = document.getElementById('system-logs-output');
 		
 		logSlider.addEventListener('input', () => {
@@ -766,6 +793,7 @@
 			const logLines = document.getElementById('log-lines').value;
 		});
 		
+		// When the slider value changes request for that amount of log lines
 		logSlider.addEventListener('change', () => {
 			const logLines = document.getElementById('log-lines').value;
 			ws.send(`logs-${logLines}`);
@@ -781,6 +809,8 @@
 			userLogCountValue.textContent = userLogSlider.value;
 		});
 		
+		
+		// When the slider value changes request for that amount of last user log lines
 		userLogSlider.addEventListener("change", () => {
 			const userLogCount = userLogSlider.value;
 			ws.send(`users-${userLogCount}`);
@@ -791,6 +821,8 @@
 		ws.onclose = () => console.log('WebSocket connection closed');
 		
 		
+		
+		// Request for the system stats.
 		setInterval(() => ws.send('stats'), 4000);
 		setInterval(() => ws.send('top_processes'), 4000);
 		setInterval(() => ws.send('system_overview'), 4000);
@@ -805,9 +837,10 @@
 		setInterval(() => {
 			const count = document.getElementById('user-log-count').value;
 			ws.send(`last_users-${count}`);
-			
 		}, 10000); 
 		
+		
+		// Control the tabs
 		document.querySelectorAll('.tabs nav button').forEach(button => {
 			button.addEventListener('click', () => {
 				document.querySelectorAll('.tabs nav button').forEach(btn => btn.classList.remove('active'));
@@ -818,6 +851,7 @@
 			});
 		});
 		
+		// Handles the sorting mechanizm when user clicks on the header of tables
 		document.querySelectorAll('table').forEach(table => {
 			const tableId = table.querySelector('tbody').id;
 			
@@ -852,6 +886,8 @@
 			});
 		});
 		
+		
+		// Send the request to the server for killing process according to the PID value in the textbox
 		document.getElementById('kill-pid-button').addEventListener('click', () => {
 			const pidInput = document.getElementById('pid-input').value.trim();
 			const outcomeLabel = document.getElementById('kill-pid-outcome');
@@ -871,6 +907,7 @@
 		});
 		
 		
+		// Controls the darkmode checkbox
 		document.addEventListener("DOMContentLoaded", function () {
 			const toggleCheckbox = document.getElementById("dark-mode-checkbox");
 			const isDarkMode = localStorage.getItem("darkMode") === "true";

@@ -140,7 +140,7 @@
         </form>
     </div>
     <script>
-        // Handle error messages
+
         const urlParams = new URLSearchParams(window.location.search);
         const usernameError = urlParams.get("username_error");
         const passwordError = urlParams.get("password_error");
@@ -151,18 +151,17 @@
             document.getElementById("password-error").textContent = passwordError;
         }
 
-        // Dark mode functionality with slider
+
+        // Dark mode for log-in page
         document.addEventListener("DOMContentLoaded", function () {
             const slider = document.getElementById("dark-mode-slider");
             const isDarkMode = localStorage.getItem("darkMode") === "true";
 
-            // Apply saved preference
             if (isDarkMode) {
                 document.body.classList.add("dark-mode");
                 slider.classList.add("active");
             }
 
-            // Toggle dark mode
             slider.addEventListener("click", function () {
                 if (slider.classList.contains("active")) {
                     slider.classList.remove("active");
