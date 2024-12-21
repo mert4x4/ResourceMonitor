@@ -28,7 +28,7 @@ async def hello(request):
 
     # Dynamically construct the base URL with user ID
     user_id = os.getenv("USER_ID", "default_id")  # Get user ID from environment
-    base_url = f"https://cs395.org/{user_id}"
+    base_url = f"https://cs395.org/1017"
 
     # Serve the login page when the GET request is received
     if request.method == "GET":
@@ -58,7 +58,7 @@ async def monitor(request):
 
     # Dynamically construct the base URL with user ID
     user_id = os.getenv("USER_ID", "default_id")  # Get user ID from environment
-    base_url = f"https://cs395.org/{user_id}"
+    base_url = f"https://cs395.org/1017"
 
     username = request.query.get("username")
     password = request.query.get("password")
